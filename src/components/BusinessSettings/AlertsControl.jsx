@@ -28,7 +28,7 @@ export default function AlertsControl() {
   const rightMenuCollapse = useRecoilState(CollapseRightBar)[0]
   const [dealerInfoValue] = useRecoilState(dealerInfo)
   const porcentageArray = numArray(90, 10)
-  const daysArray = numArray(150, 10)
+  // const daysArray = numArray(150, 10)
 
   const [alerts, setAlerts] = useState({
     dealerID: dealerInfoValue.dealerID,
@@ -186,7 +186,7 @@ export default function AlertsControl() {
                 <option value={false}>Off</option>
               </select>
             </div>
-            <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
+            {/* <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
               <h3 className="grid col-span-1 font-bold text-[#586283] text-[16px]">
                 Page Error Tracking
               </h3>
@@ -201,8 +201,8 @@ export default function AlertsControl() {
                 </option>
                 <option value={false}>Off</option>
               </select>
-            </div>
-            <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
+            </div> */}
+            {/* <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
               <h3 className="grid col-span-1 font-bold text-[#586283] text-[16px]">
                 URL Validation
               </h3>
@@ -217,8 +217,8 @@ export default function AlertsControl() {
                 </option>
                 <option value={false}>Off</option>
               </select>
-            </div>
-            <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
+            </div> */}
+            {/* <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
               <h3 className="grid col-span-1 font-bold text-[#586283] text-[16px]">
                 Aging File
               </h3>
@@ -233,7 +233,7 @@ export default function AlertsControl() {
                 </option>
                 <option value={false}>Off</option>
               </select>
-            </div>
+            </div> */}
             <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
               <h3 className="grid col-span-1 font-bold text-[#586283] text-[16px]">
                 Record Count Threshold
@@ -262,7 +262,7 @@ export default function AlertsControl() {
                 <option value={false}>Off</option>
               </select>
             </div>
-            <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
+            {/* <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
               <h3 className="grid col-span-1 font-bold text-[#586283] text-[16px]">
                 DOL Over Average
               </h3>
@@ -289,7 +289,7 @@ export default function AlertsControl() {
                 </option>
                 <option value={false}>Off</option>
               </select>
-            </div>
+            </div> */}
             <hr className="mb-4 rounded-xl border-2" />
             <div className="flex flex-row my-[6px] justify-center w-full">
               <button
