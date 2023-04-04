@@ -42,15 +42,17 @@ function DownloadResults() {
       responseType: "blob",
       data: {
         sqlService:
-          ServiceFinalWhereCls.sql.includes(" AND 1=0") &&
-          SalesFinalWhereCls.sql.includes(" AND 1=0") &&
-          (zipCodesCount || states?.length)
+          (ServiceFinalWhereCls.sql.includes(" AND 1=0") &&
+            SalesFinalWhereCls.sql.includes(" AND 1=0")) ||
+          zipCodesCount ||
+          states?.length
             ? ServiceFinalWhereCls.sql.replace(" AND 1=0", "")
             : ServiceFinalWhereCls.sql,
         sqlSales:
-          SalesFinalWhereCls.sql.includes(" AND 1=0") &&
-          ServiceFinalWhereCls.sql.includes(" AND 1=0") &&
-          (zipCodesCount || states?.length)
+          (SalesFinalWhereCls.sql.includes(" AND 1=0") &&
+            ServiceFinalWhereCls.sql.includes(" AND 1=0")) ||
+          zipCodesCount ||
+          states?.length
             ? SalesFinalWhereCls.sql.replace(" AND 1=0", "")
             : SalesFinalWhereCls.sql,
         roofTopID: dealer.rooftopID,
