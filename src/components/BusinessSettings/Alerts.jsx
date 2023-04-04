@@ -103,7 +103,7 @@ export default function Alerts() {
       createHistoricalAlertTable(
         alert.id,
         changeString(alert.alertType.slug),
-        alert.alertType.description,
+        `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID}`,
         changeDateFormat(alert.createdAt)
       )
     )
@@ -126,6 +126,7 @@ export default function Alerts() {
           alert("Error clearing Alerts")
         } else {
           setSuccessClear(true)
+          getAlertLog()
           setTimeout(() => {
             setSuccessClear(false)
           }, 10000)
@@ -174,9 +175,11 @@ export default function Alerts() {
                   <h3 className="grid font-bold text-[#586283]">
                     {`${index + 1}. ${changeString(
                       resentAlert?.alertType?.slug
-                    )}: ${
-                      resentAlert?.alertType?.description
-                    } ${changeDateFormat(resentAlert.createdAt)}`}
+                    )}: ${resentAlert?.alertType?.description} ${
+                      resentAlert?.dealer?.businessName
+                    } ${resentAlert?.dealer?.crmCompanyID} ${changeDateFormat(
+                      resentAlert.createdAt
+                    )}`}
                   </h3>
                 </div>
               </div>
