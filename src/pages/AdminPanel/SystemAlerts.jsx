@@ -95,7 +95,7 @@ const SystemAlerts = () => {
       createHistoricalAlertTable(
         alert.id,
         changeString(alert.alertType.slug),
-        alert.alertType.description,
+        `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID}`,
         changeDateFormat(alert.createdAt)
       )
     )
@@ -118,6 +118,7 @@ const SystemAlerts = () => {
           alert("Error clearing Alerts")
         } else {
           setSuccessClear(true)
+          getAdminAlertLog()
           setTimeout(() => {
             setSuccessClear(false)
           }, 10000)
@@ -169,9 +170,11 @@ const SystemAlerts = () => {
                     <h3 className="flex font-bold text-[#586283]">
                       {`${id + 1}. ${changeString(
                         resentAlert?.alertType?.slug
-                      )}. ${resentAlert?.alertType?.description} ${
+                      )}: ${resentAlert?.alertType?.description} ${
                         resentAlert?.dealer?.businessName
-                      } ${changeDateFormat(resentAlert.createdAt)}`}
+                      } ${resentAlert?.dealer?.crmCompanyID} ${changeDateFormat(
+                        resentAlert.createdAt
+                      )}`}
                     </h3>
                   </div>
                 </div>
