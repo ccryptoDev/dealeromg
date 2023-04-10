@@ -42,11 +42,7 @@ const DvSystemAlerts = () => {
 
   const getAdminAlertLog = () => {
     axios
-      .get(`${process.env.REACT_APP_API_DOMG}/api/Alerts/GetAllDV`, {
-        params: {
-          DealerID: 337,
-        },
-      })
+      .get(`${process.env.REACT_APP_API_DOMG}/api/Alerts/GetAllDV`)
       .then((res) => {
         const historicalAlertsTmp = []
         const resentAlertsTmp = []
@@ -99,7 +95,7 @@ const DvSystemAlerts = () => {
       createHistoricalAlertTable(
         alert.id,
         changeString(alert.alertType.slug),
-        alert.alertType.description,
+        `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID} ${alert?.auditDealerVault?.result}`,
         changeDateFormat(alert.createdAt)
       )
     )
@@ -122,6 +118,7 @@ const DvSystemAlerts = () => {
           alert("Error clearing Alerts")
         } else {
           setSuccessClear(true)
+          getAdminAlertLog()
           setTimeout(() => {
             setSuccessClear(false)
           }, 10000)
@@ -173,8 +170,10 @@ const DvSystemAlerts = () => {
                     <h3 className="flex font-bold text-[#586283]">
                       {`${id + 1}. ${changeString(
                         resentAlert?.alertType?.slug
-                      )}. ${resentAlert?.alertType?.description} ${
+                      )}: ${resentAlert?.alertType?.description} ${
                         resentAlert?.dealer?.businessName
+                      } ${resentAlert?.dealer?.crmCompanyID} ${
+                        resentAlert?.auditDealerVault?.result
                       } ${changeDateFormat(resentAlert.createdAt)}`}
                     </h3>
                   </div>
