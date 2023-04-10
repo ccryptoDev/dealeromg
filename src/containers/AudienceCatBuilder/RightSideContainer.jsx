@@ -1,10 +1,14 @@
 // Components
-import ResultsModule from "../../components/AudienceCatBuilder/ResultsModule";
-import DownloadResults from "../../components/AudienceCatBuilder/DownloadResults";
-import SaveBuildRequest from "../../components/AudienceCatBuilder/SaveBuildRequest";
-import resultsImg from "../../assets/images/results.png";
+import ResultsModule from "../../components/AudienceCatBuilder/ResultsModule"
+import DownloadResults from "../../components/AudienceCatBuilder/DownloadResults"
+import SaveBuildRequest from "../../components/AudienceCatBuilder/SaveBuildRequest"
+import resultsImg from "../../assets/images/results.png"
+import ExcludePastCustomer from "../../components/AudienceCatBuilder/ExcludePastCustomer"
+import { dealerInfo } from "../../atoms/DealerAtom"
+import { useRecoilState } from "recoil"
 
 function RightSideContainer() {
+  const [dealerInfoValue] = useRecoilState(dealerInfo)
   return (
     <div className="flex flex-col">
       <div className="flex space-x-3 mb-4">
@@ -14,8 +18,12 @@ function RightSideContainer() {
       <ResultsModule />
       <DownloadResults />
       <SaveBuildRequest />
+      {dealerInfoValue.rooftopID &&
+      process.env.REACT_APP_API_DOMG === "https://omgdev.azurewebsites.net/" ? (
+        <ExcludePastCustomer />
+      ) : null}
     </div>
-  );
+  )
 }
 
-export default RightSideContainer;
+export default RightSideContainer
