@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios"
 import {
   filtersValuesState,
   recordCountNumber,
@@ -12,6 +13,7 @@ function ResultsModule() {
   const [filtersValues] = useRecoilState(filtersValuesState)
   const [recordCount] = useRecoilState(recordCountNumber)
   const [spiner] = useRecoilState(Spiner)
+  const [recordCountFirst, setRecordCountFirst] = useState(0)
   // const [show] = useRecoilState(audienceCatBuilderState)
   const makesLenght =
     filtersValues.makes !== null ? filtersValues.makes.length - 1 : 0
@@ -56,6 +58,28 @@ function ResultsModule() {
     setSecond(true)
     setFirst(false)
   }
+
+  const getRecordCountFirst = async () => {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_DOMG}BigQuery/getConsumersCountFromBigQuery`,
+      {
+        sql: "",
+      }
+    )
+
+    const resBigQuery = res.data[0]
+    setRecordCountFirst(
+      resBigQuery.numpid.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    )
+  }
+
+  useEffect(() => {
+    try {
+      getRecordCountFirst()
+    } catch (error) {
+      console.log(error)
+    }
+  }, [])
 
   return (
     <div className="scrollbarHideClass flex flex-col max-h-[60vh] overflow-y-scroll">
@@ -115,7 +139,7 @@ function ResultsModule() {
                   <span className="text-[10px] font-normal">Calculating..</span>
                 </div>
               ) : (
-                "187,117,875"
+                recordCountFirst
               )}
             </li>
             <li>
