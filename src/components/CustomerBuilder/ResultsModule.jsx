@@ -8,13 +8,12 @@ import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
 import axios from "axios"
 
-function ResultsModule() {
+function ResultsModule () {
   const [first, setFirst] = useState(true)
   const [second, setSecond] = useState(false)
   const dealerInfoValues = useRecoilState(dealerInfo)[0]
   const [filtersValues] = useRecoilState(filtersValuesStateCB)
-  const [recordCount] = useRecoilState(recordCountNumberCB)
-  const [recordCountFirst, setRecordCountFirst] = useState(0)
+  const [recordCount, setRecordCount] = useRecoilState(recordCountNumberCB)
   const [spiner] = useRecoilState(SpinerCB)
   const prevPurchMakeLength =
     filtersValues.prevPurchMake !== null
@@ -54,9 +53,7 @@ function ResultsModule() {
     )
 
     const resBigQuery = res.data[0]
-    setRecordCountFirst(
-      resBigQuery.numpid.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    )
+    setRecordCount({ value: resBigQuery.numpid })
   }
 
   useEffect(() => {
@@ -125,7 +122,7 @@ function ResultsModule() {
                   <span className="text-[10px] font-normal">Calculating..</span>
                 </div>
               ) : (
-                recordCountFirst
+                "0"
               )}
             </li>
             <li>
@@ -175,7 +172,7 @@ function ResultsModule() {
             </li>
             <li>
               {filtersValues.prevPurchModel != null &&
-              filtersValues.prevPurchModel.length >= 1 ? (
+                filtersValues.prevPurchModel.length >= 1 ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
                     Previously Purchased a Vehicle Model
@@ -190,7 +187,7 @@ function ResultsModule() {
             </li>
             <li>
               {filtersValues.prevPurchMake != null &&
-              filtersValues.prevPurchMake.length >= 1 ? (
+                filtersValues.prevPurchMake.length >= 1 ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
                     Previously Purchased a Vehicle Makes
@@ -205,7 +202,7 @@ function ResultsModule() {
             </li>
             <li>
               {filtersValues.prevSerMake != null &&
-              filtersValues.prevSerMake.length >= 1 ? (
+                filtersValues.prevSerMake.length >= 1 ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
                     Previously Serviced a Vehicle Makes
@@ -220,7 +217,7 @@ function ResultsModule() {
             </li>
             <li>
               {filtersValues.prevSerModel != null &&
-              filtersValues.prevSerModel.length >= 1 ? (
+                filtersValues.prevSerModel.length >= 1 ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
                     Previously Serviced a Vehicle Model
@@ -235,7 +232,7 @@ function ResultsModule() {
             </li>
             <li>
               {filtersValues.neverPurchased != null &&
-              filtersValues.neverPurchased !== false ? (
+                filtersValues.neverPurchased !== false ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
                     Never Purchased a Vehicle
@@ -248,7 +245,7 @@ function ResultsModule() {
             </li>
             <li>
               {filtersValues.nevSerPrevPurch != null &&
-              filtersValues.nevSerPrevPurch !== false ? (
+                filtersValues.nevSerPrevPurch !== false ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
                     Never Serviced, Previously Purchased a Vehicle
@@ -338,7 +335,7 @@ function ResultsModule() {
               )}
             </li>
             {filtersValues.states !== null &&
-            filtersValues.states.length !== 0 ? (
+              filtersValues.states.length !== 0 ? (
               <p className="flex flex-col mb-[16px]">
                 <span className="text-[12px] font-normal">State</span>
                 {filtersValues.states.join(",")}
