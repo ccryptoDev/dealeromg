@@ -79,8 +79,8 @@ const GeoZipCodeArea = () => {
     axios
       .get(
         `${process.env.REACT_APP_API_ZIP_CODES}${CLIENT_KEY}/radius.json/${
-          geozipcode || 66043
-        }/${distance || 20}/mile`
+          geozipcode || dealerInfoValue.zipCode
+        }/${distance || 10}/mile`
       )
       .then((res) => {
         const zipcodesData = res.data.zip_codes
