@@ -223,12 +223,18 @@ const GeoZipCodeArea = () => {
             Zip Code
           </h2>
           <div className="flex space-x-8 items-center justify-between">
-            <div className="flex space-x-10">
+            <div className="flex w-full">
+              <span
+                className="image-input_center cursor-pointer"
+                style={{ backgroundColor: "#F5F9FF" }}
+                onClick={() => setGeozipcode(dealerInfoValue.zipCode)}
+                title="Add Dealer's Zip Code To Form"
+              ></span>
               <input
                 onChange={changeZipCode}
                 value={geozipcode ?? ""}
                 placeholder="Starting Zip Code"
-                className="rounded-xl image-input_center p-[16px]  focus:outline-[#58628325]"
+                className="rounded-xl p-[16px]  focus:outline-[#58628325] mr-10"
               ></input>
               <input
                 onChange={changeRadius}
@@ -236,13 +242,11 @@ const GeoZipCodeArea = () => {
                 placeholder="Radius"
                 className="rounded-xl image-input_radius p-[16px] focus:outline-[#58628325]"
               ></input>
-              {distance != null && geozipcode != null ? (
+
+              {distance != null && geozipcode !== null ? (
                 <button
-                  onClick={() => {
-                    findZipCodes(true)
-                    setGeozipcode(geozipcode ?? dealerInfoValue.zipCode)
-                  }}
-                  className="flex items-center w-[80px] justify-around text-white bg-[#298FC2] focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+                  onClick={() => findZipCodes(true)}
+                  className="flex items-center w-[80px] justify-around text-white bg-[#298FC2] focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ml-10"
                 >
                   Display
                 </button>
@@ -271,7 +275,7 @@ const GeoZipCodeArea = () => {
               </FormControl>
             </Box>
           </div>
-          <div className="flex justify-between mt-4 mb-[32px] h-[48px]">
+          <div className="flex justify-between mt-4 mb-[32px] h-[48px] ml-7">
             <input
               className="w-[60%] px-4 py-2 rounded-lg border-none text-sm focus:ring-[#58628325]"
               type="text"
@@ -314,28 +318,28 @@ const GeoZipCodeArea = () => {
             Zip Code
           </h2>
           <div className="flex space-x-8 items-center justify-between">
-            <div className="flex space-x-10">
+            <div className="flex w-full">
+              <span
+                className="image-input_center cursor-pointer"
+                style={{ backgroundColor: "#F5F9FF" }}
+                onClick={() => setGeozipcode(dealerInfoValue.zipCode)}
+                title="Add Dealer's Zip Code To Form"
+              ></span>
               <input
                 onChange={changeZipCode}
-                value={geozipcode ?? dealerInfoValue.zipCode}
+                value={geozipcode ?? ""}
                 placeholder="Starting Zip Code"
-                className="rounded-xl image-input_center p-[16px]  focus:outline-[#58628325]"
+                className="rounded-xl p-[16px]  focus:outline-[#58628325] mr-10"
               ></input>
               <input
                 onChange={changeRadius ?? ""}
                 value={distance ?? ""}
                 placeholder="Radius"
-                className="rounded-xl image-input_radius p-[16px] focus:outline-[#58628325]"
+                className="rounded-xl image-input_radius p-[16px] focus:outline-[#58628325] mr-10"
               ></input>
-              {distance != null &&
-              (geozipcode !== null ||
-                geozipcode !== "" ||
-                dealerInfoValue.zipCode) ? (
+              {distance != null && geozipcode !== null ? (
                 <button
-                  onClick={() => {
-                    findZipCodes(true)
-                    setGeozipcode(geozipcode ?? dealerInfoValue.zipCode)
-                  }}
+                  onClick={() => findZipCodes(true)}
                   className="flex items-center w-[80px] justify-around text-white bg-[#298FC2] focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
                 >
                   Display
@@ -365,7 +369,7 @@ const GeoZipCodeArea = () => {
               </FormControl>
             </Box>
           </div>
-          <div className="flex justify-between mt-4 mb-[32px] h-[48px]">
+          <div className="flex justify-between mt-4 mb-[32px] h-[48px] ml-7">
             <input
               className="w-[60%] px-4 py-2 rounded-lg border-none text-sm focus:ring-[#58628325]"
               type="text"
