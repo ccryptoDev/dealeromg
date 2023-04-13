@@ -1,21 +1,21 @@
-import { Link, matchPath, useLocation } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { Link, matchPath, useLocation } from "react-router-dom"
+import { useRecoilState } from "recoil"
 
-import { dealerInfo } from "../atoms/DealerAtom";
+import { dealerInfo } from "../atoms/DealerAtom"
 
 function TabsModule() {
-  const [dealerInfoValue] = useRecoilState(dealerInfo);
-  const { pathname } = useLocation();
-  const pathA = { path: "/target-market/audience-builder" };
-  const pathCB = { path: "/target-market/customer-builder" };
-  const pathG = { path: "/target-market/global-builds" };
-  const pathU = { path: "/target-market/user-builds" };
-  const pathD = { path: "/target-market/dealer-builds" };
-  const currentPathA = matchPath(pathA, pathname);
-  const currentPathCB = matchPath(pathCB, pathname);
-  const currentPathG = matchPath(pathG, pathname);
-  const currentPathU = matchPath(pathU, pathname);
-  const currentPathD = matchPath(pathD, pathname);
+  const [dealerInfoValue] = useRecoilState(dealerInfo)
+  const { pathname } = useLocation()
+  const pathA = { path: "/target-market/audience-builder" }
+  const pathCB = { path: "/target-market/customer-builder" }
+  const pathG = { path: "/target-market/global-builds" }
+  const pathU = { path: "/target-market/user-builds" }
+  const pathD = { path: "/target-market/dealer-builds" }
+  const currentPathA = matchPath(pathA, pathname)
+  const currentPathCB = matchPath(pathCB, pathname)
+  const currentPathG = matchPath(pathG, pathname)
+  const currentPathU = matchPath(pathU, pathname)
+  const currentPathD = matchPath(pathD, pathname)
   return (
     <div className="w-full flex flex-row justify-start space-x-8 items-end">
       <ul className="ml-[150px] flex flex-rowborder-gray-200 dark:border-gray-700">
@@ -78,7 +78,7 @@ function TabsModule() {
         </li>
       </ul>
       <div className="absolute flex flex-row text-lg font-bold text-white top-[105px] right-[5%]">
-        {dealerInfoValue.businessName}
+        {`${dealerInfoValue.businessName} - ${dealerInfoValue.zipCode}`}
         <Link to="/business-settings/profile">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ function TabsModule() {
         </Link>
       </div>
     </div>
-  );
+  )
 }
 
-export default TabsModule;
+export default TabsModule
