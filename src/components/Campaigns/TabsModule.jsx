@@ -51,7 +51,7 @@ function TabsModule() {
         </li>
       </ul>
       <div className="absolute flex flex-row text-lg font-bold text-white top-[105px] right-[5%]">
-        {dealerInfoValue.businessName}
+        {`${dealerInfoValue.businessName} - ${dealerInfoValue.zipCode}`}
         <Link to="/business-settings/profile">
           <svg
             xmlns="http://www.w3.org/2000/svg"
