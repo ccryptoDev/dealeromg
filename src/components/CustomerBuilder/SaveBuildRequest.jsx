@@ -178,7 +178,13 @@ function SaveBuildRequest() {
             : dealerInfoValue.dealerID,
         presetType,
         presetName: preset.name,
-        tags: [preset.tag, "Customer"],
+        tags: [
+          preset.tag,
+          "CUSTOMER",
+          filterValues.zipCodeCenter && filterValues.zipCodeRadius
+            ? `Zip Code ${filterValues.zipCodeCenter} - Miles ${filterValues.zipCodeRadius}`
+            : "",
+        ],
         recordRequest: JSON.stringify(recordRequest),
         filterValues: JSON.stringify(filterValues),
         sqlQueryService: JSON.stringify(sqlQueryService),
