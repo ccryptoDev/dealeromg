@@ -16,7 +16,13 @@ function General({ nameBuilds, preset, handleSet, handleDelete }) {
               className="ml-3 text-sm font-bold text-[#586283] cursor-pointer"
               onClick={() => handleSet(preset.presetID)}
             >
-              {`Pre-Set | ${preset.presetName} | ${preset.tags.join(" | ")}`}
+              {`${preset.tags[1].toUpperCase()} | ${preset.tags[0]}  ${
+                preset.tags[2] !== "" &&
+                preset.tags[2] !== null &&
+                preset.tags[2] !== undefined
+                  ? " | " + preset.tags[2] + " | "
+                  : "|"
+              } ${preset.presetName}`}
             </p>
           </div>
           <div className="flex flex-row space-x-4">
