@@ -25,21 +25,19 @@ const _ = require("lodash")
 
 function PresetResults({ nameBuilds = "", data, sqlAudience }) {
   const dealerInfoValue = useRecoilState(dealerInfo)[0]
-  const setFilterValues = useRecoilState(
-    sqlAudience === "" ? filtersValuesState : filtersValuesStateCB
-  )[1]
+  const setFilterValues = useRecoilState(filtersValuesState)[1]
+  const setFilterValuesCB = useRecoilState(filtersValuesStateCB)[1]
   const setSqlQuery = useRecoilState(FinalWhereClsAM)[1]
-  const setRecordRequest = useRecoilState(
-    sqlAudience === "" ? recordCountValuesState : recordCountValuesStateCB
-  )[1]
+  const setRecordRequest = useRecoilState(recordCountValuesState)[1]
+  const setRecordRequestCB = useRecoilState(recordCountValuesStateCB)[1]
   const setSqlQueryService = useRecoilState(FinalWhereClsCBService)[1]
   const setSqlQuerySale = useRecoilState(FinalWhereClsCBSale)[1]
   const [presets, setPresets] = useState([])
   const [presetsGroup, setPresetsGroup] = useState([])
-  const setSpiner = useRecoilState(sqlAudience === "" ? Spiner : SpinerCB)[1]
-  const setRecordCount = useRecoilState(
-    sqlAudience === "" ? recordCountNumber : recordCountNumberCB
-  )[1]
+  const setSpiner = useRecoilState(Spiner)[1]
+  const setSpinerCB = useRecoilState(SpinerCB)[1]
+  const setRecordCount = useRecoilState(recordCountNumber)[1]
+  const setRecordCountCB = useRecoilState(recordCountNumberCB)[1]
   const [showDelete, setShowDelete] = useState(false)
   const [deletedID, setDeletedID] = useState(null)
 
@@ -64,18 +62,22 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
   const handleSet = (id) => {
     const presetsAux = presets.filter((preset) => preset.presetID === id)
     const filterValues = JSON.parse(presetsAux[0].filterValues)
-    setFilterValues(filterValues)
     const recordRequest = JSON.parse(presetsAux[0].recordRequest)
-    setRecordRequest(recordRequest)
     let url = ""
     let sql
     if (presetsAux[0].sqlQuery !== null) {
+      setSpiner(true)
+      setFilterValues(filterValues)
+      setRecordRequest(recordRequest)
       url = "getConsumersCountFromBigQuery"
       setSqlQuery(JSON.parse(presetsAux[0].sqlQuery))
       setSqlQuerySale({ sql: "" })
       setSqlQueryService({ sql: "" })
       sql = JSON.parse(presetsAux[0].sqlQuery)
     } else {
+      setSpinerCB(true)
+      setFilterValuesCB(filterValues)
+      setRecordRequestCB(recordRequest)
       const { neverPurchased, nevSerPrevPurch } = filterValues
       const sqlService = JSON.parse(presetsAux[0].sqlQueryService)
       const sqlSales = JSON.parse(presetsAux[0].sqlQuerySales)
@@ -95,8 +97,14 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
       .then((res) => {
         const resBigQuery = res.data[0]
         const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
-        setSpiner(false)
+
+        if (presetsAux[0].sqlQuery !== null) {
+          setRecordCount({ value: recordCountNumber })
+          setSpiner(false)
+        } else {
+          setRecordCountCB({ value: recordCountNumber })
+          setSpinerCB(false)
+        }
       })
   }
 
