@@ -81,6 +81,43 @@ export const createSQLSliderSentence = (
   return WhereClsAM
 }
 
+export const createSQLDateSentence = (
+  recordRequestBody,
+  filterName,
+  columnBQ,
+  filtersValues,
+  AdWhereClsAM,
+  needOR
+) => {
+  let WhereClsAM = ""
+  if (filtersValues[filterName] && filtersValues[filterName].length > 0) {
+    const auxWhereClsAM = `${AdWhereClsAM.sql}`
+    const auxText = `CAST('${filtersValues[filterName][0]}' AS DATE FORMAT 'MM/DD/YYYY') AND CAST('${filtersValues[filterName][1]}' AS DATE FORMAT 'MM/DD/YYYY')`
+    const valueToReplace = needOR
+      ? ` AND (${columnBQ}1 BETWEEN ${auxText} OR ${columnBQ}2 BETWEEN ${auxText} OR ${columnBQ}3 BETWEEN ${auxText} OR ${columnBQ}4 BETWEEN ${auxText})`
+      : ` AND ${columnBQ} BETWEEN ${auxText}`
+    const newValue = needOR
+      ? ` AND (${columnBQ}1 BETWEEN ${recordRequestBody} OR ${columnBQ}2 BETWEEN ${recordRequestBody} OR ${columnBQ}3 BETWEEN ${recordRequestBody} OR ${columnBQ}4 BETWEEN ${recordRequestBody})`
+      : ` AND ${columnBQ} BETWEEN ${recordRequestBody}`
+    if (AdWhereClsAM.sql.includes(columnBQ)) {
+      if (recordRequestBody.length === 0) {
+        WhereClsAM = auxWhereClsAM.replace(valueToReplace, "")
+      } else {
+        WhereClsAM = auxWhereClsAM.replace(valueToReplace, newValue)
+      }
+    }
+  } else {
+    if (recordRequestBody) {
+      WhereClsAM = needOR
+        ? `${AdWhereClsAM.sql} AND (${columnBQ}1 BETWEEN ${recordRequestBody} OR ${columnBQ}2 BETWEEN ${recordRequestBody} OR ${columnBQ}3 BETWEEN ${recordRequestBody} OR ${columnBQ}4 BETWEEN ${recordRequestBody})`
+        : `${AdWhereClsAM.sql} AND ${columnBQ} BETWEEN ${recordRequestBody}`
+    } else {
+      WhereClsAM = AdWhereClsAM.sql
+    }
+  }
+  return WhereClsAM
+}
+
 export const findQuery = (items, columnBQ) => {
   if (items.length === 0) return ""
   let query = ""
