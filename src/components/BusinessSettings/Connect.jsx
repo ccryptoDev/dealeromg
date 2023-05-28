@@ -55,6 +55,7 @@ export default function Connect() {
     formData.append("WebStreamID", dealerConnections.webStreamID)
     formData.append("DashThisURL", dealerConnections.dashThisURL)
     formData.append("RoofTopID", dealerConnections.dealerVaultID)
+    formData.append("ProgramID", "DVV01397")
     formData.append("fb_page_id", dealerConnections.fbPageID)
     axios
       .patch(`${process.env.REACT_APP_API_DOMG}Dealers`, formData, {
