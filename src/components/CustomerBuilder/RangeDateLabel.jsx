@@ -26,6 +26,9 @@ const RangeDateLabel = ({ setDays }) => {
       case "Last 5 Years":
         selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 1826)
         break
+      case "Last 10 Years":
+        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 3653)
+        break
       default:
         break
     }
@@ -100,6 +103,11 @@ const RangeDateLabel = ({ setDays }) => {
         <button type="button" className="rdrStaticRange">
           <span tabIndex="-1" className="rdrStaticRangeLabel">
             Last 5 Years
+          </span>
+        </button>
+        <button type="button" className="rdrStaticRange">
+          <span tabIndex="-1" className="rdrStaticRangeLabel">
+            Last 10 Years
           </span>
         </button>
       </div>
