@@ -51,11 +51,15 @@ const PrevSerVehNeverPurch = () => {
         sqlService:
           sqlService.sql === " AND 1=0" && sqlSales.sql === " AND 1=0"
             ? ""
-            : sqlService.sql,
+            : sqlService.sql
+            ? sqlService.sql
+            : " AND 1=0",
         sqlSales:
           sqlService.sql === " AND 1=0" && sqlSales.sql === " AND 1=0"
             ? ""
-            : sqlSales.sql,
+            : sqlSales.sql
+            ? sqlSales.sql
+            : " AND 1=0",
         roofTopID: dealerInfoValue.rooftopID,
       })
       .then((res) => {
