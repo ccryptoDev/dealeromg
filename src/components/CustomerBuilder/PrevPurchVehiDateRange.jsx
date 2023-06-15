@@ -16,8 +16,7 @@ import RangeDateLabel from "./RangeDateLabel"
 import { useState, useEffect } from "react"
 import SaveMessage from "../Fields/SaveMessage"
 import SwitchFilter from "../Fields/SwitchFilter"
-import { createSQLSliderSentence } from "../AudienceCatBuilder/utils"
-import { getFormattedDate } from "../../util/dateRangeFormater"
+import { createSQLDateSentence } from "../AudienceCatBuilder/utils"
 import { bigQueryURL } from "../../util/bigQueryURL"
 
 const PrevPurchVehiDateRange = () => {
@@ -31,7 +30,7 @@ const PrevPurchVehiDateRange = () => {
   const [recordRequest, setRecordRequest] = useRecoilState(
     recordCountValuesStateCB
   )
-  const { neverPurchased, nevSerPrevPurch } = filterValues
+  const { neverPurchased, nevSerPrevPurch, nevSerDateRange } = filterValues
   const [days, setDays] = useState([
     {
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000 * 730),
@@ -54,21 +53,19 @@ const PrevPurchVehiDateRange = () => {
   }
   const handleSubmit = () => {
     const dateRange = [
-      getFormattedDate(days[0].startDate),
-      getFormattedDate(days[0].endDate),
+      days[0].startDate.toLocaleString("en-US").split(",")[0],
+      days[0].endDate.toLocaleString("en-US").split(",")[0],
     ]
     setFiltersValues({
       ...filterValues,
       prevPurchDateRange: dateRange,
     })
     sendRequestCount(
-      `'${days[0].startDate
-        .toISOString()
-        .replace("T", " ")
-        .replace(".000", "")}' AND '${days[0].endDate
-        .toISOString()
-        .replace("T", " ")
-        .replace(".000", "")}'`
+      `CAST('${
+        days[0].startDate.toLocaleString("en-US").split(",")[0]
+      }' AS DATE FORMAT 'MM/DD/YYYY') AND CAST('${
+        days[0].endDate.toLocaleString("en-US").split(",")[0]
+      }' AS DATE FORMAT 'MM/DD/YYYY')`
     )
     setRecordRequest({ ...recordRequest, prevPurchDateRange: null })
     setAlert(true)
@@ -77,11 +74,16 @@ const PrevPurchVehiDateRange = () => {
   const sendRequestCount = (recordRequestBody) => {
     setSpiner(true)
     const sqlClean = { sql: AdWhereClsAM.sql.replace(" AND 1=0", "") }
-    const url = bigQueryURL(neverPurchased, nevSerPrevPurch).url
-    const WhereClsAM = createSQLSliderSentence(
+    const url = bigQueryURL(
+      neverPurchased,
+      nevSerPrevPurch,
+      nevSerDateRange,
+      recordRequestBody ? ["06/06/2022"] : null
+    ).url
+    const WhereClsAM = createSQLDateSentence(
       recordRequestBody,
       "prevPurchDateRange",
-      "DateImported",
+      "CAST(NULLIF(ContractDate,'') AS DATE FORMAT 'MM/DD/YYYY')",
       filterValues,
       sqlClean,
       false
@@ -89,8 +91,8 @@ const PrevPurchVehiDateRange = () => {
     setAdWhereClsAM({ sql: WhereClsAM })
     axios
       .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlSales: WhereClsAM,
-        sqlService: sqlService.sql,
+        sqlSales: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
+        sqlService: sqlService.sql ? sqlService.sql : " AND 1=0",
         roofTopID: dealerInfoValue.rooftopID,
       })
       .then((res) => {
@@ -133,6 +135,7 @@ const PrevPurchVehiDateRange = () => {
               moveRangeOnFirstSelection={false}
               months={2}
               ranges={days}
+              editableDateInputs={true}
               direction="horizontal"
             />
           </div>
