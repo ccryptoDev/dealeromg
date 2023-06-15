@@ -84,8 +84,10 @@ export default function VehYear() {
     setAdWhereClsAM({ sql: WhereClsAM })
     axios
       .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlSales: sqlSales.sql,
-        sqlService: WhereClsAM,
+        sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
+        sqlService: WhereClsAM
+          ? WhereClsAM.replace(" AND 1=0", "")
+          : " AND 1=0",
         roofTopID: dealerInfoValue.rooftopID,
       })
       .then((res) => {
