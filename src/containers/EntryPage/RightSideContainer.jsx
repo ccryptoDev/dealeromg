@@ -13,7 +13,7 @@ function RightSideContainer() {
   }
   return (
     <div className="sticky">
-      <h2 className="font-bold text-[#586283] text-[20px]">Close Profile</h2>
+      <h2 className="font-bold text-[#586283] text-[20px]">Admin Shortcut</h2>
       <div className="flex flex-col p-[15px]">
         <div className="flex justify-between items-center mt-4 mb-4 h-[48px]">
           <button

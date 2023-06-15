@@ -16,7 +16,9 @@ function General({ nameBuilds, preset, handleSet, handleDelete }) {
               className="ml-3 text-sm font-bold text-[#586283] cursor-pointer"
               onClick={() => handleSet(preset.presetID)}
             >
-              {`${preset.tags[1].toUpperCase()} | ${preset.tags[0]}  ${
+              {`${
+                preset.tags[1] ? preset.tags[1].toUpperCase() : "AUDIENCE"
+              } | ${preset.tags[0]}  ${
                 preset.tags[2] !== "" &&
                 preset.tags[2] !== null &&
                 preset.tags[2] !== undefined
