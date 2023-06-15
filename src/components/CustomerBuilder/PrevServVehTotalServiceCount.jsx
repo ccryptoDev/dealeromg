@@ -80,7 +80,12 @@ const PrevServVehTotalServiceCount = () => {
     axios
       .post(
         `${process.env.REACT_APP_API_DOMG}BigQuery/getDealerVaultCountFromBigQuery`,
-        { sqlService: WhereClsAM, sqlSales: sqlSales.sql }
+        {
+          sqlService: WhereClsAM
+            ? WhereClsAM.replace(" AND 1=0", "")
+            : " AND 1=0",
+          sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
+        }
       )
       .then((res) => {
         const resBigQuery = res.data[0]
