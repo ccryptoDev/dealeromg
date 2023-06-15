@@ -13,7 +13,6 @@ import axios from "axios"
 import check from "../../assets/images/check.svg"
 import ListClientsNoGrouped from "./ListClientsNoGrouped"
 import ListClientsGrouped from "./ListClientsGrouped"
-import businessprofile from "../../assets/images/business-profile-dark.svg"
 import CollapsingButton from "../../components/Fields/CollapsingButton"
 
 const _ = require("lodash")
@@ -403,11 +402,6 @@ function ListClient() {
         {collapse && authPermRols[2] ? (
           <div className="flex flex-col pt-2">
             <CollapsingButton side="right" />
-            <img
-              src={businessprofile}
-              alt="bussines profile gray"
-              className="h-[20px] w-[18px] ml-4"
-            />
           </div>
         ) : (
           ""
