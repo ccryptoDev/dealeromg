@@ -15,9 +15,8 @@ import "react-date-range/dist/theme/default.css" // theme css file
 import { DateRange } from "react-date-range"
 import RangeDateLabel from "./RangeDateLabel"
 import SaveMessage from "../Fields/SaveMessage"
-import { createSQLSliderSentence } from "../AudienceCatBuilder/utils"
+import { createSQLDateSentence } from "../AudienceCatBuilder/utils"
 import SwitchFilter from "../Fields/SwitchFilter"
-import { getFormattedDate } from "../../util/dateRangeFormater"
 import { bigQueryURL } from "../../util/bigQueryURL"
 
 const PrevSerDateRange = () => {
@@ -53,21 +52,19 @@ const PrevSerDateRange = () => {
   }
   const handleSubmit = () => {
     const dateRange = [
-      getFormattedDate(days[0].startDate),
-      getFormattedDate(days[0].endDate),
+      days[0].startDate.toLocaleString("en-US").split(",")[0],
+      days[0].endDate.toLocaleString("en-US").split(",")[0],
     ]
     setFiltersValues({
       ...filterValues,
       PrevSerDateRange: dateRange,
     })
     sendRequestCount(
-      `'${days[0].startDate
-        .toISOString()
-        .replace("T", " ")
-        .replace(".000", "")}' AND '${days[0].endDate
-        .toISOString()
-        .replace("T", " ")
-        .replace(".000", "")}'`
+      `CAST('${
+        days[0].startDate.toLocaleString("en-US").split(",")[0]
+      }' AS DATE FORMAT 'MM/DD/YYYY') AND CAST('${
+        days[0].endDate.toLocaleString("en-US").split(",")[0]
+      }' AS DATE FORMAT 'MM/DD/YYYY')`
     )
     setRecordRequest({ ...recordRequest, PrevSerDateRange: null })
     setAlert(true)
@@ -77,10 +74,10 @@ const PrevSerDateRange = () => {
     setSpiner(true)
     const sqlClean = { sql: AdWhereClsAM.sql.replace(" AND 1=0", "") }
     const url = bigQueryURL(neverPurchased, nevSerPrevPurch).url
-    const WhereClsAM = createSQLSliderSentence(
+    const WhereClsAM = createSQLDateSentence(
       recordRequestBody,
       "PrevSerDateRange",
-      "DateImported",
+      "CAST(NULLIF(CloseDate,'') AS DATE FORMAT 'MM/DD/YYYY')",
       filterValues,
       sqlClean,
       false
@@ -88,8 +85,10 @@ const PrevSerDateRange = () => {
     setAdWhereClsAM({ sql: WhereClsAM })
     axios
       .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlService: WhereClsAM,
-        sqlSales: sqlSales.sql,
+        sqlService: WhereClsAM
+          ? WhereClsAM.replace(" AND 1=0", "")
+          : " AND 1=0",
+        sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
         roofTopID: dealerInfoValue.rooftopID,
       })
       .then((res) => {
@@ -134,6 +133,7 @@ const PrevSerDateRange = () => {
               moveRangeOnFirstSelection={false}
               months={2}
               ranges={days}
+              editableDateInputs={true}
               direction="horizontal"
             />
           </div>
