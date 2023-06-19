@@ -1,4 +1,9 @@
-export const bigQueryURL = (neverPurchased, nevSerPrevPurch) => {
+export const bigQueryURL = (
+  neverPurchased,
+  nevSerPrevPurch,
+  nevSerDateRange = false,
+  prevPurchDateRange = false
+) => {
   const bigQueryURL = {
     url: "",
     csv: "",
@@ -11,7 +16,17 @@ export const bigQueryURL = (neverPurchased, nevSerPrevPurch) => {
 
   const excludeSalesServiceQuery = neverPurchased && nevSerPrevPurch
 
-  if (notExcludeQuery) {
+  const includeSalesNeverServiceQuery = !!(
+    nevSerDateRange &&
+    nevSerDateRange[0] &&
+    prevPurchDateRange &&
+    prevPurchDateRange[0]
+  )
+
+  if (includeSalesNeverServiceQuery) {
+    bigQueryURL.url = "getDealerVaultCountFromBQSalesNeverService"
+    bigQueryURL.csv = "getDealerVaultListSalesNeverServiceCSV"
+  } else if (notExcludeQuery) {
     bigQueryURL.url = "getDealerVaultCountFromBigQuery"
     bigQueryURL.csv = "getDealerVaultListCSV"
   } else if (excludeSalesVehicleQuery) {
