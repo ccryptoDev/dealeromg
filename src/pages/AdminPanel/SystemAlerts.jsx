@@ -69,6 +69,7 @@ const SystemAlerts = () => {
   }
 
   const rowsHistoricalAlerTable = []
+  const rowsRecentAlerTable = []
   const headCellsHistoricalAlerTable = [
     {
       id: "name",
@@ -92,6 +93,18 @@ const SystemAlerts = () => {
 
   historicalAlerts.map((alert) => {
     rowsHistoricalAlerTable.push(
+      createHistoricalAlertTable(
+        alert.id,
+        changeString(alert.alertType.slug),
+        `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID}`,
+        changeDateFormat(alert.createdAt)
+      )
+    )
+    return null
+  })
+
+  resentAlerts.map((alert) => {
+    rowsRecentAlerTable.push(
       createHistoricalAlertTable(
         alert.id,
         changeString(alert.alertType.slug),
@@ -160,25 +173,17 @@ const SystemAlerts = () => {
                 </h2>
               </div>
               <hr className="mb-4 rounded-xl border-2" />
-              {resentAlerts.map((resentAlert, id) => (
-                <div
-                  className="grid grid-cols-8 mb-[12px] pr-[20px] space-x-1 justify-start w-full items-center"
-                  key={id}
-                >
-                  <div className="col-span-8 flex flex-row space-x-2 pl-[20px]">
-                    <img src={alert} alt="alert" />
-                    <h3 className="flex font-bold text-[#586283]">
-                      {`${id + 1}. ${changeString(
-                        resentAlert?.alertType?.slug
-                      )}: ${resentAlert?.alertType?.description} ${
-                        resentAlert?.dealer?.businessName
-                      } ${resentAlert?.dealer?.crmCompanyID} ${changeDateFormat(
-                        resentAlert.createdAt
-                      )}`}
-                    </h3>
+              <section className="mt-[20px] border-b-2 border-[#E0E0E0] pb-[20px]">
+                <div className="mt-[20px] flex rounded-[12px] bg-white text-[16px] text-[#586283]">
+                  <div className="w-full">
+                    <EnhancedTable
+                      headCells={headCellsHistoricalAlerTable}
+                      rows={rowsRecentAlerTable}
+                      titleName=""
+                    />
                   </div>
                 </div>
-              ))}
+              </section>
               <div className="flex flex-row my-[12px] justify-center w-full">
                 <button
                   onClick={handleSubmitClear}
