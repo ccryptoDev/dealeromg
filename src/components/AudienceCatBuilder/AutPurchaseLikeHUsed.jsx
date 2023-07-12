@@ -6,6 +6,7 @@ import {
   FinalWhereClsAM,
   recordCountValuesState,
 } from "../../atoms/audienceCatBuilderAtom"
+import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
 import React, { useEffect } from "react"
 import arrowup from "../../assets/images/arrowup.png"
@@ -24,6 +25,7 @@ const AutPurchaseLikeHUsed = ({ setNews, setUsed }) => {
   )
   const setSpiner = useRecoilState(Spiner)[1]
   const [AdWhereClsAM, setAdWhereClsAM] = useRecoilState(FinalWhereClsAM)
+  const dealerInfoValue = useRecoilState(dealerInfo)[0]
   const finalPurchaseLikeUsed = []
 
   const purshaceLikelihoodPersistencyUsed = () => {
@@ -108,13 +110,30 @@ const AutPurchaseLikeHUsed = ({ setNews, setUsed }) => {
     axios
       .post(
         `${process.env.REACT_APP_API_DOMG}BigQuery/getConsumersCountFromBigQuery`,
-        { sql: WhereClsAM }
+        {
+          sql: WhereClsAM,
+          roofTopID: dealerInfoValue.rooftopID,
+          sqlService: filtersValues.excludeService
+            ? `${filtersValues.excludeService}`
+            : "",
+          sqlSales: filtersValues.excludeSales
+            ? `${filtersValues.excludeSales}`
+            : "",
+        }
       )
       .then((res) => {
         const resBigQuery = res.data[0]
+        const resBigQueryExclude = res.data[1]?.numpid
 
-        const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
+        setRecordCount({
+          value: resBigQuery.numpid,
+          amountExcludeSales: filtersValues.excludeSales
+            ? resBigQueryExclude
+            : null,
+          amountExcludeService: filtersValues.excludeService
+            ? resBigQueryExclude
+            : null,
+        })
         setSpiner(false)
       })
   }
