@@ -4,7 +4,7 @@ export const customerBuilderState = atom({
   key: "customerBuilderState",
   default: [
     { name: "Previously Purchased a Vehicle", status: false },
-    { name: "No Service in a Date Range", status: false },
+    { name: "No Services in a Date Range", status: false },
     { name: "RO Code", status: false },
     { name: "Never Purchased a Vehicle", status: false },
     { name: "Total Service Count", status: false },

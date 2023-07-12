@@ -55,6 +55,8 @@ export const filtersValuesState = atom({
     zipCodesCount: null,
     brandLoyalty: null,
     educationLevel: null,
+    excludeService: null,
+    excludeSales: null,
   },
 })
 
@@ -85,6 +87,8 @@ export const recordCountValuesState = atom({
     creditRepairInterest: null,
     creditReportInterest: null,
     educationLevel: null,
+    excludeService: null,
+    excludeSales: null,
   },
 })
 
@@ -95,7 +99,11 @@ export const csvFacebookData = atom({
 
 export const recordCountNumber = atom({
   key: "recordCountNumber",
-  default: { value: null },
+  default: {
+    value: null,
+    amountExcludeService: null,
+    amountExcludeSales: null,
+  },
 })
 
 export const FinalWhereClsAM = atom({
