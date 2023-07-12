@@ -2,12 +2,18 @@ import { useRecoilState } from "recoil"
 import axios from "axios"
 import { useState } from "react"
 
-import { FinalWhereClsAM } from "../../atoms/audienceCatBuilderAtom"
+import { dealerInfo } from "../../atoms/DealerAtom"
+import {
+  FinalWhereClsAM,
+  filtersValuesState,
+} from "../../atoms/audienceCatBuilderAtom"
 import useAuth from "../../Hooks/useAuth"
 
 function DownloadResults() {
   const [FinalWhereCls] = useRecoilState(FinalWhereClsAM)
   const [facebookSpinner, setFacebookSpinner] = useState(false)
+  const dealerInfoValue = useRecoilState(dealerInfo)[0]
+  const filtersValues = useRecoilState(filtersValuesState)[0]
   const [fileName, setFileName] = useState(
     `Audience-Builder-${new Date().toLocaleDateString()}.csv`
   )
@@ -30,7 +36,16 @@ function DownloadResults() {
       url: `${process.env.REACT_APP_API_DOMG}BigQuery/getConsumersListCSV`,
       method: "POST",
       responseType: "blob",
-      data: FinalWhereCls,
+      data: {
+        sql: FinalWhereCls.sql,
+        roofTopID: dealerInfoValue.rooftopID,
+        sqlService: filtersValues.excludeService
+          ? `${filtersValues.excludeService}`
+          : "",
+        sqlSales: filtersValues.excludeSales
+          ? `${filtersValues.excludeSales}`
+          : "",
+      },
     }).then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement("a")
