@@ -1,4 +1,14 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRecoilState } from "recoil"
+import axios from "axios"
+import {
+  filtersValuesState,
+  recordCountValuesState,
+  FinalWhereClsAM,
+  recordCountNumber,
+  Spiner,
+} from "../../atoms/audienceCatBuilderAtom"
+import { dealerInfo } from "../../atoms/DealerAtom"
 import useAuth from "../../Hooks/useAuth"
 import { numArray } from "../../util/makeNumberArray"
 
@@ -10,10 +20,65 @@ const ExcludePastCustomer = () => {
     true
   )
   const years = numArray(10, 1)
+  const [filtersValues, setFiltersValues] = useRecoilState(filtersValuesState)
+  const [recordRequest, setRecordRequest] = useRecoilState(
+    recordCountValuesState
+  )
+  const setSpiner = useRecoilState(Spiner)[1]
+  const AdWhereClsAM = useRecoilState(FinalWhereClsAM)[0]
+  const setRecordCount = useRecoilState(recordCountNumber)[1]
+  const dealerInfoValue = useRecoilState(dealerInfo)[0]
   const [autoPurchase, setAutoPurchase] = useState(false)
   const [autoService, setAutoService] = useState(false)
   const [autoPurchaseYears, setAutoPurchaseYears] = useState(3)
   const [autoServiceYears, setAutoServiceYears] = useState(3)
+
+  useEffect(() => {
+    if (filtersValues.excludeService) {
+      setAutoServiceYears(+filtersValues.excludeService)
+      setAutoService(true)
+    }
+    if (filtersValues.excludeSales) {
+      setAutoPurchaseYears(+filtersValues.excludeSales)
+      setAutoPurchase(true)
+    }
+  }, [filtersValues.excludeService, filtersValues.excludeSales])
+
+  const handleSubmit = () => {
+    setFiltersValues({
+      ...filtersValues,
+      excludeSales: autoPurchase ? `${autoPurchaseYears}` : null,
+      excludeService: autoService ? `${autoServiceYears}` : null,
+    })
+    setRecordRequest({
+      ...recordRequest,
+      excludeSales: autoPurchase ? `Last ${autoPurchaseYears} Years` : null,
+      excludeService: autoService ? `Last ${autoServiceYears} Years` : null,
+    })
+
+    setSpiner(true)
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getConsumersCountFromBigQuery`,
+        {
+          sql: AdWhereClsAM.sql,
+          roofTopID: dealerInfoValue.rooftopID,
+          sqlService: autoPurchase ? `${autoPurchaseYears}` : "",
+          sqlSales: autoService ? `${autoServiceYears}` : "",
+        }
+      )
+      .then((res) => {
+        const resBigQuery = res.data[0]
+        const resBigQueryExclude = res.data[1]?.numpid
+
+        setRecordCount({
+          value: resBigQuery.numpid,
+          amountExcludeSales: autoPurchase ? resBigQueryExclude : null,
+          amountExcludeService: autoService ? resBigQueryExclude : null,
+        })
+        setSpiner(false)
+      })
+  }
 
   const handleSelect = (e) => {
     if (e.target.name === "autoPurchase") {
@@ -125,7 +190,7 @@ const ExcludePastCustomer = () => {
             </select>
           </div>
           <button
-            onClick={() => console.log("Open")}
+            onClick={handleSubmit}
             type="button"
             className="mb-4 text-white bg-[#298FC2] rounded-[12px] hover:bg-blue-800  px-5 py-2.5 text-center inline-flex items-center mr-2 space-x-4"
           >
