@@ -5,6 +5,7 @@ import {
   recordCountNumber,
   Spiner,
 } from "../../atoms/audienceCatBuilderAtom"
+import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
 
 function ResultsModule() {
@@ -14,6 +15,7 @@ function ResultsModule() {
   const [recordCount] = useRecoilState(recordCountNumber)
   const [spiner] = useRecoilState(Spiner)
   const [recordCountFirst, setRecordCountFirst] = useState(0)
+  const dealerInfoValue = useRecoilState(dealerInfo)[0]
   // const [show] = useRecoilState(audienceCatBuilderState)
   const makesLenght =
     filtersValues.makes !== null ? filtersValues.makes.length - 1 : 0
@@ -64,6 +66,9 @@ function ResultsModule() {
       `${process.env.REACT_APP_API_DOMG}BigQuery/getConsumersCountFromBigQuery`,
       {
         sql: "",
+        sqlSales: "",
+        sqlService: "",
+        roofTopID: dealerInfoValue.rooftopID,
       }
     )
 
@@ -457,6 +462,44 @@ function ResultsModule() {
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">Makes</span>
                   {filtersValues.makes[0]} and {makesLenght}+
+                </p>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
+              {recordCount.amountExcludeService ||
+              recordCount.amountExcludeSales ? (
+                <p className="flex flex-col mb-[16px]">
+                  <span className="text-[12px] font-normal">
+                    Auto Service Count
+                  </span>{" "}
+                  {recordCount.amountExcludeSales ||
+                    recordCount.amountExcludeService}
+                </p>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
+              {filtersValues.excludeSales ? (
+                <p className="flex flex-col mb-[16px]">
+                  <span className="text-[12px] font-normal">
+                    Auto Purchase Year Range
+                  </span>{" "}
+                  {`Last ${filtersValues.excludeSales} Years`}
+                </p>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
+              {filtersValues.excludeService ? (
+                <p className="flex flex-col mb-[16px]">
+                  <span className="text-[12px] font-normal">
+                    Auto Service Year Range
+                  </span>{" "}
+                  {`Last ${filtersValues.excludeService} Years`}
                 </p>
               ) : (
                 ""
