@@ -6,6 +6,7 @@ import {
   FinalWhereClsAM,
   Spiner,
 } from "../../atoms/audienceCatBuilderAtom"
+import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
 import axios from "axios"
 import { createSQLListSentence } from "./utils"
@@ -33,6 +34,7 @@ const VehPurchaseDate = () => {
   const [AdWhereClsAM, setAdWhereClsAM] = useRecoilState(FinalWhereClsAM)
   const setSpiner = useRecoilState(Spiner)[1]
   const setRecordCount = useRecoilState(recordCountNumber)[1]
+  const dealerInfoValue = useRecoilState(dealerInfo)[0]
   const finalPD = []
   const finalPDCodes = []
 
@@ -114,14 +116,30 @@ const VehPurchaseDate = () => {
     axios
       .post(
         `${process.env.REACT_APP_API_DOMG}BigQuery/getConsumersCountFromBigQuery`,
-        { sql: WhereClsAM }
+        {
+          sql: WhereClsAM,
+          roofTopID: dealerInfoValue.rooftopID,
+          sqlService: filtersValues.excludeService
+            ? `${filtersValues.excludeService}`
+            : "",
+          sqlSales: filtersValues.excludeSales
+            ? `${filtersValues.excludeSales}`
+            : "",
+        }
       )
       .then((res) => {
         const resBigQuery = res.data[0]
+        const resBigQueryExclude = res.data[1]?.numpid
 
-        const recordCountNumber = resBigQuery.numpid
-        // setFacebookData(res.data)
-        setRecordCount({ value: recordCountNumber })
+        setRecordCount({
+          value: resBigQuery.numpid,
+          amountExcludeSales: filtersValues.excludeSales
+            ? resBigQueryExclude
+            : null,
+          amountExcludeService: filtersValues.excludeService
+            ? resBigQueryExclude
+            : null,
+        })
         setSpiner(false)
       })
   }
