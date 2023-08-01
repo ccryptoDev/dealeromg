@@ -233,7 +233,7 @@ function AudienceCatModule() {
         <div className="pl-5">
           <ul className="list-disc pl-5 dark:text-gray-400 text-gray-500">
             <li
-              onClick={() => statusChange("No Service in a Date Range")}
+              onClick={() => statusChange("No Services in a Date Range")}
               className="text-[#586283] list-none dark:text-blue-500 mb-[16px] cursor-pointer"
             >
               No Services in a Date Range
