@@ -83,7 +83,9 @@ const NevSerDateRange = () => {
     const WhereClsAM = createSQLDateSentence(
       recordRequestBody,
       "nevSerDateRange",
-      "CAST(NULLIF(CloseDate,'') AS DATE FORMAT 'MM/DD/YYYY') NOT",
+      `CAST(NULLIF(CloseDate,'') AS DATE FORMAT 'MM/DD/YYYY')${
+        url !== "getDealerVaultCountFromBQSalesNeverService" ? " NOT" : ""
+      }`,
       filterValues,
       sqlClean,
       false
@@ -123,7 +125,7 @@ const NevSerDateRange = () => {
   return (
     <>
       <h2 className="font-bold text-[#586283] text-[20px]">
-        No Service in a Date Range
+        No Services in a Date Range
       </h2>
       <div className="flex flex-col items-center m-4">
         {alert && filterValues.nevSerDateRange !== null && (
@@ -139,6 +141,8 @@ const NevSerDateRange = () => {
               months={2}
               ranges={days}
               editableDateInputs={true}
+              maxDate={new Date("12/31/2024")}
+              dateDisplayFormat="MM/dd/yyyy"
               direction="horizontal"
             />
           </div>
