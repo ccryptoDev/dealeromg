@@ -133,7 +133,7 @@ const NevSerPrevPurch = () => {
       <div className="flex flex-row justify-between items-center rounded-xl bg-[#E3EBF6] px-2 mt-5">
         <button
           className="bg-white text-[#586283] rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-2"
-          onClick={() => statusChange("No Service in a Date Range")}
+          onClick={() => statusChange("No Services in a Date Range")}
         >
           Previous Filter
         </button>
