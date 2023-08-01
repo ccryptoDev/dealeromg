@@ -136,6 +136,8 @@ const PrevPurchVehiDateRange = () => {
               months={2}
               ranges={days}
               editableDateInputs={true}
+              dateDisplayFormat="MM/dd/yyyy"
+              maxDate={new Date("12/31/2024")}
               direction="horizontal"
             />
           </div>
