@@ -43,6 +43,9 @@ function ResetFiltersButton({ audienceCatBuilder }) {
     const body = audienceCatBuilder
       ? {
           sql: "",
+          roofTopID: dealer.rooftopID,
+          sqlService: "",
+          sqlSales: "",
         }
       : {
           sqlSales: "",
@@ -55,7 +58,15 @@ function ResetFiltersButton({ audienceCatBuilder }) {
     })
     const resBigQuery = res.data[0]
     const recordCountNumber = resBigQuery.numpid
-    setRecordCount({ value: recordCountNumber })
+    if (audienceCatBuilder) {
+      setRecordCount({
+        value: recordCountNumber,
+        amountExcludeSales: null,
+        amountExcludeService: null,
+      })
+    } else {
+      setRecordCount({ value: recordCountNumber })
+    }
   }
 
   return (
