@@ -29,6 +29,8 @@ export const defaultFilterValuesAB = {
   zipCodesCount: null,
   brandLoyalty: null,
   educationLevel: null,
+  excludeService: null,
+  excludeSales: null,
 }
 
 export const defaultRecordCountValuesAB = {
@@ -56,6 +58,8 @@ export const defaultRecordCountValuesAB = {
   creditRepairInterest: null,
   creditReportInterest: null,
   educationLevel: null,
+  excludeService: null,
+  excludeSales: null,
 }
 
 export const defaultFilterValuesCB = {
