@@ -4,6 +4,7 @@ import DownloadResults from "../../components/AudienceCatBuilder/DownloadResults
 import SaveBuildRequest from "../../components/AudienceCatBuilder/SaveBuildRequest"
 import resultsImg from "../../assets/images/results.png"
 import ExcludePastCustomer from "../../components/AudienceCatBuilder/ExcludePastCustomer"
+import TransactionCount from "../../components/CustomerBuilder/TransactionCount"
 import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
 
@@ -18,9 +19,11 @@ function RightSideContainer() {
       <ResultsModule />
       <DownloadResults />
       <SaveBuildRequest />
-      {dealerInfoValue.rooftopID &&
-      process.env.REACT_APP_API_DOMG === "https://omgdev.azurewebsites.net/" ? (
-        <ExcludePastCustomer />
+      {dealerInfoValue.rooftopID ? (
+        <>
+          <ExcludePastCustomer />
+          <TransactionCount />
+        </>
       ) : null}
     </div>
   )
