@@ -17,6 +17,9 @@ function RightSideContainer() {
   const customerSale = useRecoilState(FinalWhereClsCBSale)[0]
   const customerService = useRecoilState(FinalWhereClsCBService)[0]
 
+  console.log("audience", audience)
+  console.log("customerSale", customerSale)
+  console.log("customerService", customerService)
   return (
     <div className="flex flex-col">
       <div className="flex space-x-3 mb-4">
@@ -24,24 +27,24 @@ function RightSideContainer() {
         <h1 className="font-bold mb-2 text-[#298FC2]">Results</h1>
       </div>
       {audience.sql === "" &&
-      customerSale.sql === "" &&
-      customerService.sql === "" ? (
+      (customerSale.sql === " AND 1=0" || customerSale.sql === "") &&
+      (customerService.sql === " AND 1=0" || customerService.sql === "") ? (
         <h1 className="text-[20px] font-normal text-gray-500 text-center">
-          No build have been selected
+          Select your build to see results
         </h1>
       ) : (
         <>
           {audience.sql !== "" &&
-          customerSale.sql === "" &&
-          customerService.sql === "" ? (
+          (customerSale.sql === " AND 1=0" || customerSale.sql === "") &&
+          (customerService.sql === " AND 1=0" || customerService.sql === "") ? (
             <ResultsModule />
           ) : (
             <ResultsModuleCB />
           )}
           <DedupeOptions />
           {audience.sql !== "" &&
-          customerSale.sql === "" &&
-          customerService.sql === "" ? (
+          (customerSale.sql === " AND 1=0" || customerSale.sql === "") &&
+          (customerService.sql === " AND 1=0" || customerService.sql === "") ? (
             <DownloadResults />
           ) : (
             <DownloadResultsCB />
