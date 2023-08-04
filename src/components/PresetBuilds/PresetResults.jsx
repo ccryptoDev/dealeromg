@@ -73,7 +73,13 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
       setSqlQuery(JSON.parse(presetsAux[0].sqlQuery))
       setSqlQuerySale({ sql: "" })
       setSqlQueryService({ sql: "" })
-      sql = JSON.parse(presetsAux[0].sqlQuery)
+      const presetSQL = JSON.parse(presetsAux[0].sqlQuery)
+      sql = {
+        sql: presetSQL.sql,
+        roofTopID: dealerInfoValue.rooftopID,
+        sqlService: presetSQL.sqlService ? presetSQL.sqlService : "",
+        sqlSales: presetSQL.sqlSales ? presetSQL.sqlSales : "",
+      }
     } else {
       setSpinerCB(true)
       setFilterValuesCB(filterValues)
@@ -99,7 +105,16 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
         const recordCountNumber = resBigQuery.numpid
 
         if (presetsAux[0].sqlQuery !== null) {
-          setRecordCount({ value: recordCountNumber })
+          const resBigQueryExclude = res.data[1]?.numpid
+          setRecordCount({
+            value: recordCountNumber,
+            amountExcludeSales: filterValues.excludeSales
+              ? resBigQueryExclude
+              : null,
+            amountExcludeService: filterValues.excludeService
+              ? resBigQueryExclude
+              : null,
+          })
           setSpiner(false)
         } else {
           setRecordCountCB({ value: recordCountNumber })
