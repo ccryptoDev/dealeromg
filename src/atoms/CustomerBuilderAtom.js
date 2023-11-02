@@ -20,6 +20,7 @@ export const customerBuilderState = atom({
     { name: "State", status: false },
     { name: "DMA", status: false },
     { name: "Zip Code Radius", status: true },
+    { name: "New/Used", status: false },
   ],
 })
 
@@ -45,6 +46,7 @@ export const filtersValuesStateCB = atom({
     prevSerTotalService: null,
     prevSerTotalSpend: null,
     PrevSerDateRange: null,
+    prevPurchNewUsed: null,
   },
 })
 
@@ -70,12 +72,18 @@ export const recordCountValuesStateCB = atom({
     prevSerTotalService: null,
     prevSerTotalSpend: null,
     PrevSerDateRange: null,
+    prevPurchNewUsed: null,
   },
 })
 
 export const csvFacebookDataCB = atom({
   key: "csvFacebookDataCB",
   default: [],
+})
+
+export const recordCountNumberActivityCB = atom({
+  key: "recordCountNumberActivityCB",
+  default: { valueSales: null, valueService: null },
 })
 
 export const recordCountNumberCB = atom({
