@@ -42,6 +42,12 @@ const ExcludePastCustomer = () => {
       setAutoPurchaseYears(+filtersValues.excludeSales)
       setAutoPurchase(true)
     }
+    if (!filtersValues.excludeSales && !filtersValues.excludeService) {
+      setAutoPurchase(false)
+      setAutoService(false)
+      setAutoPurchaseYears(3)
+      setAutoServiceYears(3)
+    }
   }, [filtersValues.excludeService, filtersValues.excludeSales])
 
   const handleSubmit = () => {
@@ -63,19 +69,27 @@ const ExcludePastCustomer = () => {
         {
           sql: AdWhereClsAM.sql,
           roofTopID: dealerInfoValue.rooftopID,
-          sqlService: autoPurchase ? `${autoPurchaseYears}` : "",
-          sqlSales: autoService ? `${autoServiceYears}` : "",
+          sqlService: autoService ? `${autoServiceYears}` : "",
+          sqlSales: autoPurchase ? `${autoPurchaseYears}` : "",
         }
       )
       .then((res) => {
         const resBigQuery = res.data[0]
         const resBigQueryExclude = res.data[1]?.numpid
 
-        setRecordCount({
-          value: resBigQuery.numpid,
-          amountExcludeSales: autoPurchase ? resBigQueryExclude : null,
-          amountExcludeService: autoService ? resBigQueryExclude : null,
-        })
+        if (autoPurchase && autoService) {
+          setRecordCount({
+            value: resBigQuery.numpid,
+            amountExcludeService: resBigQueryExclude,
+            amountExcludeSales: res.data[2]?.numpid,
+          })
+        } else {
+          setRecordCount({
+            value: resBigQuery.numpid,
+            amountExcludeSales: autoPurchase ? resBigQueryExclude : null,
+            amountExcludeService: autoService ? resBigQueryExclude : null,
+          })
+        }
         setSpiner(false)
       })
   }
