@@ -119,16 +119,23 @@ const HDemAmountChildren = ({
       .then((res) => {
         const resBigQuery = res.data[0]
         const resBigQueryExclude = res.data[1]?.numpid
-
-        setRecordCount({
-          value: resBigQuery.numpid,
-          amountExcludeSales: filtersValues.excludeSales
-            ? resBigQueryExclude
-            : null,
-          amountExcludeService: filtersValues.excludeService
-            ? resBigQueryExclude
-            : null,
-        })
+        if (filtersValues.excludeSales && filtersValues.excludeService) {
+          setRecordCount({
+            value: resBigQuery.numpid,
+            amountExcludeService: resBigQueryExclude,
+            amountExcludeSales: res.data[2]?.numpid,
+          })
+        } else {
+          setRecordCount({
+            value: resBigQuery.numpid,
+            amountExcludeSales: filtersValues.excludeSales
+              ? resBigQueryExclude
+              : null,
+            amountExcludeService: filtersValues.excludeService
+              ? resBigQueryExclude
+              : null,
+          })
+        }
         setSpiner(false)
       })
   }
