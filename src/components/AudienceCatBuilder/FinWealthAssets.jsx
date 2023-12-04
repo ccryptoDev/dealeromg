@@ -215,16 +215,23 @@ export default function FinWealthAssets({
       .then((res) => {
         const resBigQuery = res.data[0]
         const resBigQueryExclude = res.data[1]?.numpid
-
-        setRecordCount({
-          value: resBigQuery.numpid,
-          amountExcludeSales: filtersValues.excludeSales
-            ? resBigQueryExclude
-            : null,
-          amountExcludeService: filtersValues.excludeService
-            ? resBigQueryExclude
-            : null,
-        })
+        if (filtersValues.excludeSales && filtersValues.excludeService) {
+          setRecordCount({
+            value: resBigQuery.numpid,
+            amountExcludeService: resBigQueryExclude,
+            amountExcludeSales: res.data[2]?.numpid,
+          })
+        } else {
+          setRecordCount({
+            value: resBigQuery.numpid,
+            amountExcludeSales: filtersValues.excludeSales
+              ? resBigQueryExclude
+              : null,
+            amountExcludeService: filtersValues.excludeService
+              ? resBigQueryExclude
+              : null,
+          })
+        }
         setSpiner(false)
       })
   }
@@ -261,7 +268,7 @@ export default function FinWealthAssets({
             <span className="font-medium">Selected Range: </span>
             {value[1] === 1000
               ? `$${value[0]},000 - $1,000,000+`
-              : `$${value[0]},000 - $${value[1]},000 +`}
+              : `$${value[0]},000 - $${value[1]},000`}
           </h2>
           <div className="flex justify-between">
             <button
