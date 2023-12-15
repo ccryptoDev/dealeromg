@@ -216,16 +216,20 @@ export const createSQLListSentence = (
   recordRequest,
   AdWhereClsAM,
   needOR,
-  oldBigQuery = null
+  oldBigQuery = null,
+  transformAuxText = true
 ) => {
   let WhereClsAM = ""
   if (filtersValues[filterName] && filtersValues[filterName].length > 0) {
     const auxWhereClsAM = `${
       oldBigQuery == null ? AdWhereClsAM.sql : oldBigQuery
     }`
-    const auxText = recordRequest[filterName].map((it) => {
-      return `'${it.toUpperCase()}'`
-    })
+    let auxText = recordRequest[filterName]
+    if (transformAuxText) {
+      auxText = recordRequest[filterName].map((it) => {
+        return `'${it.toUpperCase()}'`
+      })
+    }
     const valueToReplace = needOR
       ? ` AND (${columnBQ}1 IN(${auxText}) OR ${columnBQ}2 IN(${auxText}) OR ${columnBQ}3 IN(${auxText}) OR ${columnBQ}4 IN(${auxText}))`
       : ` AND ${columnBQ} IN(${auxText})`
