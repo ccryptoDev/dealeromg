@@ -469,13 +469,25 @@ function ResultsModule() {
             </li>
             <li>
               {recordCount.amountExcludeService ||
-              recordCount.amountExcludeSales ? (
+              recordCount.amountExcludeService === 0 ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
-                    Auto Service Count
+                    Exclude Auto Service Count
                   </span>{" "}
-                  {recordCount.amountExcludeSales ||
-                    recordCount.amountExcludeService}
+                  {recordCount.amountExcludeService}
+                </p>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
+              {recordCount.amountExcludeSales ||
+              recordCount.amountExcludeSales === 0 ? (
+                <p className="flex flex-col mb-[16px]">
+                  <span className="text-[12px] font-normal">
+                    Exclude Auto Purchase Count
+                  </span>{" "}
+                  {recordCount.amountExcludeSales}
                 </p>
               ) : (
                 ""
@@ -485,7 +497,7 @@ function ResultsModule() {
               {filtersValues.excludeSales ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
-                    Auto Purchase Year Range
+                    Exclude Auto Purchase Year Range
                   </span>{" "}
                   {`Last ${filtersValues.excludeSales} Years`}
                 </p>
@@ -497,7 +509,7 @@ function ResultsModule() {
               {filtersValues.excludeService ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
-                    Auto Service Year Range
+                    Exclude Auto Service Year Range
                   </span>{" "}
                   {`Last ${filtersValues.excludeService} Years`}
                 </p>
