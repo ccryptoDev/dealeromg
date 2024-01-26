@@ -11,6 +11,7 @@ import {
   recordCountValuesStateCB,
   recordCountNumberCB,
   FinalWhereClsCBSale,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
 import { dealerInfo } from "../../atoms/DealerAtom"
 import SaveMessage from "../Fields/SaveMessage"
@@ -26,11 +27,14 @@ const NevSerDateRange = () => {
   const sqlSales = useRecoilState(FinalWhereClsCBSale)[0]
   const dealerInfoValue = useRecoilState(dealerInfo)[0]
   const setSpiner = useRecoilState(SpinerCB)[1]
-  const setRecordCount = useRecoilState(recordCountNumberCB)[1]
+  const setRecordCountNumber = useRecoilState(recordCountNumberCB)[1]
   const [recordRequest, setRecordRequest] = useRecoilState(
     recordCountValuesStateCB
   )
-  const { neverPurchased, nevSerPrevPurch, prevPurchDateRange } = filterValues
+  const setRecordCountActivityNumber = useRecoilState(
+    recordCountNumberActivityCB
+  )[1]
+  const { neverPurchased, nevSerPrevPurch } = filterValues
   const [days, setDays] = useState([
     {
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000 * 730),
@@ -77,32 +81,44 @@ const NevSerDateRange = () => {
     const url = bigQueryURL(
       neverPurchased,
       nevSerPrevPurch,
-      recordRequestBody ? ["06/06/2022"] : null,
-      prevPurchDateRange
+      recordRequestBody
     ).url
     const WhereClsAM = createSQLDateSentence(
       recordRequestBody,
       "nevSerDateRange",
-      `CAST(NULLIF(CloseDate,'') AS DATE FORMAT 'MM/DD/YYYY')${
-        url !== "getDealerVaultCountFromBQSalesNeverService" ? " NOT" : ""
-      }`,
+      "CAST(COALESCE(NULLIF(CAST(CloseDate AS STRING), ''), NULLIF(CAST(CustomerLastActivityDate AS STRING), ''), NULLIF(CAST(DeliveryDate AS STRING), '')) AS DATE FORMAT 'MM/DD/YYYY')",
+      // "COALESCE(NULLIF(CAST(CloseDate AS STRING), ''), NULLIF(CAST(CustomerLastActivityDate AS STRING), ''), NULLIF(CAST(DeliveryDate AS STRING), ''))",
       filterValues,
       sqlClean,
       false
     )
     setAdWhereClsAM({ sql: WhereClsAM })
+    const bodyRequest = {
+      sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
+      sqlService: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
+      roofTopID: dealerInfoValue.rooftopID,
+    }
     axios
-      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlService: WhereClsAM
-          ? WhereClsAM.replace(" AND 1=0", "")
-          : " AND 1=0",
-        sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
-        roofTopID: dealerInfoValue.rooftopID,
-      })
+      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, bodyRequest)
       .then((res) => {
         const resBigQuery = res.data[0]
         const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
+        setRecordCountNumber({ value: recordCountNumber })
+        setSpiner(false)
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivityNumber({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
         setSpiner(false)
       })
   }
@@ -163,8 +179,8 @@ const NevSerDateRange = () => {
         </div>
       </div>
       <SwitchFilter
-        next={"Previously Purchased a Vehicle"}
-        prev={"RO Code"}
+        next={"Services in a Date Range"}
+        prev={"New/Used"}
         custBuild={true}
       />
     </>
