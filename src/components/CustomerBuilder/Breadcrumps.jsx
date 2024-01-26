@@ -8,11 +8,14 @@ function Breadcrumps() {
   const showIndex = show.findIndex((item) => item.status === true)
   if (showIndex <= 16 && showIndex >= 14) {
     breadCrumbTitle = "Geographic"
-  } else if (showIndex <= 13 && showIndex >= 10) {
+  } else if (
+    (showIndex <= 13 && showIndex >= 10) ||
+    [1, 17].includes(showIndex)
+  ) {
     breadCrumbTitle = "Previously Purchased a Vehicle"
   } else if (showIndex <= 9 && showIndex >= 2) {
     breadCrumbTitle = "Previously Serviced a Vehicle"
-  } else if (showIndex === 1 || showIndex === 0) {
+  } else if (showIndex === 0) {
     breadCrumbTitle = "Never Serviced a Vehicle"
   }
 
@@ -24,7 +27,7 @@ function Breadcrumps() {
             href="/"
             className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
           >
-            Customer Builds
+            Customer Builder
           </a>
         </li>
         <li aria-current="page">

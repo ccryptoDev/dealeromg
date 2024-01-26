@@ -8,6 +8,7 @@ import {
   FinalWhereClsCBService,
   SpinerCB,
   recordCountNumberCB,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
 import arrowup from "../../assets/images/arrowup.png"
 import reset from "../../assets/images/reset.png"
@@ -27,7 +28,10 @@ const GeoState = () => {
   const [sqlService, setSqlService] = useRecoilState(FinalWhereClsCBService)
   const setSpiner = useRecoilState(SpinerCB)[1]
   const setRecordCountNumber = useRecoilState(recordCountNumberCB)[1]
-  const { neverPurchased, nevSerPrevPurch } = filterValue
+  const setRecordCountActivityNumber = useRecoilState(
+    recordCountNumberActivityCB
+  )[1]
+  const { neverPurchased, nevSerPrevPurch, nevSerDateRange } = filterValue
   const usStates = [
     "AL",
     "AK",
@@ -113,7 +117,11 @@ const GeoState = () => {
 
   const sendRequestCount = (recordRequestBody) => {
     setSpiner(true)
-    const url = bigQueryURL(neverPurchased, nevSerPrevPurch).url
+    const url = bigQueryURL(
+      neverPurchased,
+      nevSerPrevPurch,
+      nevSerDateRange
+    ).url
     const WhereClsAM = createSQLListSentence(
       recordRequestBody,
       "states",
@@ -134,18 +142,34 @@ const GeoState = () => {
     )
     setAdWhereClsAM({ sql: WhereClsAM })
     setSqlService({ sql: WhereClsAMService })
+    const bodyRequest = {
+      sqlSales: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
+      sqlService: WhereClsAMService
+        ? WhereClsAMService.replace(" AND 1=0", "")
+        : " AND 1=0",
+      roofTopID: dealerInfoValue.rooftopID,
+    }
     axios
-      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlSales: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
-        sqlService: WhereClsAMService
-          ? WhereClsAMService.replace(" AND 1=0", "")
-          : " AND 1=0",
-        roofTopID: dealerInfoValue.rooftopID,
-      })
+      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, bodyRequest)
       .then((res) => {
         const resBigQuery = res.data[0]
         const recordCountNumber = resBigQuery.numpid
         setRecordCountNumber({ value: recordCountNumber })
+        setSpiner(false)
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivityNumber({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
         setSpiner(false)
       })
   }
