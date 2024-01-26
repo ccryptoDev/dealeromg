@@ -14,8 +14,13 @@ function DownloadResults() {
   const [SalesFinalWhereCls] = useRecoilState(FinalWhereClsCBSale)
   const [ServiceFinalWhereCls] = useRecoilState(FinalWhereClsCBService)
   const dealer = useRecoilState(dealerInfo)[0]
-  const { neverPurchased, nevSerPrevPurch, zipCodesCount, states } =
-    useRecoilState(filtersValuesStateCB)[0]
+  const {
+    neverPurchased,
+    nevSerPrevPurch,
+    zipCodesCount,
+    states,
+    nevSerDateRange,
+  } = useRecoilState(filtersValuesStateCB)[0]
   const [facebookSpinner, setFacebookSpinner] = useState(false)
   const [fileName, setFileName] = useState(
     `Customer-Builder-${new Date().toLocaleDateString()}.csv`
@@ -33,7 +38,11 @@ function DownloadResults() {
   }
 
   const csvDataDownload = () => {
-    const url = bigQueryURL(neverPurchased, nevSerPrevPurch).csv
+    const url = bigQueryURL(
+      neverPurchased,
+      nevSerPrevPurch,
+      nevSerDateRange
+    ).csv
     setShowNamingFile(false)
     setFacebookSpinner(true)
     axios({

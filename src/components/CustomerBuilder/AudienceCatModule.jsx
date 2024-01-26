@@ -128,6 +128,18 @@ function AudienceCatModule() {
             >
               Year
             </li>
+            <li
+              onClick={() => statusChange("New/Used")}
+              className="text-[#586283] list-none dark:text-blue-500 mb-[16px] cursor-pointer"
+            >
+              New/Used
+            </li>
+            <li
+              onClick={() => statusChange("No Services in a Date Range")}
+              className="text-[#586283] list-none dark:text-blue-500 mb-[16px] cursor-pointer"
+            >
+              No Services in a Date Range
+            </li>
           </ul>
         </div>
       </div>
@@ -208,7 +220,7 @@ function AudienceCatModule() {
         </div>
       </div>
       {/* Never Serviced a Vehicle */}
-      <h2>
+      {/* <h2>
         <button
           type="button"
           name="nevServVeh"
@@ -233,12 +245,6 @@ function AudienceCatModule() {
         <div className="pl-5">
           <ul className="list-disc pl-5 dark:text-gray-400 text-gray-500">
             <li
-              onClick={() => statusChange("No Services in a Date Range")}
-              className="text-[#586283] list-none dark:text-blue-500 mb-[16px] cursor-pointer"
-            >
-              No Services in a Date Range
-            </li>
-            <li
               onClick={() => statusChange("Previously Purchased a Vehicle")}
               className="text-[#586283] list-none dark:text-blue-500 mb-[16px] cursor-pointer"
             >
@@ -246,7 +252,7 @@ function AudienceCatModule() {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
