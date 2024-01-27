@@ -26,7 +26,10 @@ export const dealerInfo = atom({
     dashThisURL: null,
     tierLevel: false,
     randomID: "",
+    random_id: "",
     rooftopID: null,
+    longitude: null,
+    latitude: null,
     cretedAt: "",
     user: {
       userID: 1,
