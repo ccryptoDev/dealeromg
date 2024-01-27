@@ -19,6 +19,7 @@ export const audienceCatBuilderState = atom({
     { name: "Vehicle Models", status: false },
     { name: "Vehicle Makes", status: false },
     { name: "Zip Code Radius", status: true },
+    { name: "Map", status: false },
   ],
 })
 
