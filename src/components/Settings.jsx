@@ -7,16 +7,11 @@ import { dealerInfo } from "../atoms/DealerAtom"
 import useAuth from "../Hooks/useAuth"
 
 const Settings = ({ top }) => {
-  const authPermRolsAP = useAuth(
-    [""],
-    false,
-    ["super-admin", "admin", "Management"],
-    true
-  )
+  const authPermRolsAP = useAuth([""], false, ["super-admin", "admin"], true)
   const authPermRolsBS = useAuth(
     [""],
     false,
-    ["super-admin", "admin", "Management", "Staff"],
+    ["super-admin", "admin", "Management"],
     true
   )
   const [show, setShow] = useState(false)
