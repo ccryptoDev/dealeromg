@@ -16,9 +16,15 @@ import supportIcon from "../../assets/images/reset.png"
 export default function InventoryUrls() {
   const rightMenuCollapse = useRecoilState(CollapseRightBar)[0]
   const [dealerInfoValue] = useRecoilState(dealerInfo)
-  const [success, setSuccess] = React.useState(false)
+  const [success, setSuccess] = useState(false)
   const [crmCompanyID, setcrmCompanyID] = useState("")
   const [dataProvider, setDataProvider] = useState([])
+  const [validUrls, setValidUrls] = useState({
+    url1: "",
+    url2: "",
+    url3: "",
+    isActive: false,
+  })
   const [selectedProvider, setSelectedProvider] = useState()
   const [inventory, setInventory] = useState({
     dealerID: 1,
@@ -77,7 +83,7 @@ export default function InventoryUrls() {
       .catch((error) => console.log(error))
   }
 
-  const getDataProvider = async (id) => {
+  const getDataProvider = async () => {
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_API_DOMG}DataProviders`
@@ -88,9 +94,21 @@ export default function InventoryUrls() {
     }
   }
 
+  const getValidUrls = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_DOMG}api/AlertParameters/GetValidUrls?DealerID=${dealerInfoValue.dealerID}`
+      )
+      setValidUrls(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getcrmCompanyID()
     getDataProvider()
+    getValidUrls()
     setSelectedProvider(dealerInfoValue.dataProviderID)
   }, [])
 
@@ -124,6 +142,27 @@ export default function InventoryUrls() {
       .then((response) => {
         if (response.status !== 200) {
           alert("Error saving data provider")
+        } else {
+          setSuccess(true)
+          setTimeout(() => {
+            setSuccess(false)
+          }, 10000)
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  const handleSubmitValidUrls = () => {
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}api/AlertParameters/SetValidUrls`,
+        { ...validUrls, dealerId: dealerInfoValue.dealerID }
+      )
+      .then((response) => {
+        if (response.status !== 200) {
+          alert("Error saving validations url")
         } else {
           setSuccess(true)
           setTimeout(() => {
@@ -190,7 +229,6 @@ export default function InventoryUrls() {
                 ))}
               </select>
             </div>
-            <hr className="mt-2 mb-4 rounded-xl border-2" />
             <div className="flex flex-row my-[12px] justify-center w-full">
               <button
                 onClick={handleSubmit}
@@ -200,9 +238,70 @@ export default function InventoryUrls() {
                 <img className="mx-2" src={arrowup} alt="arrow" />
               </button>
             </div>
+            <hr className="mt-2 mb-4 rounded-xl border-2" />
+            <div className="grid grid-cols-12 mt-[10px] justify-start w-full items-center gap-2">
+              <div className="flex mb-4 col-span-12">
+                <input
+                  id="checkbox-valid-urls"
+                  checked={validUrls.isActive}
+                  onChange={() =>
+                    setValidUrls({
+                      ...validUrls,
+                      isActive: !validUrls.isActive,
+                    })
+                  }
+                  aria-describedby="checkbox-valid-urls"
+                  type="checkbox"
+                  className="w-4 h-4 bg-[#298fc217] text-[#298FC2] rounded-full border-gray-300 focus:ring-blue-500 dark:focus:ring-[#298FC2] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  htmlFor="checkbox-valid-urls"
+                  className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Use VDP URL Validator
+                </label>
+              </div>
+              {validUrls.isActive && (
+                <>
+                  <input
+                    type="url"
+                    value={validUrls.url1}
+                    onChange={(event) =>
+                      setValidUrls({ ...validUrls, url1: event.target.value })
+                    }
+                    className="grid col-span-12 rounded-xl w-full focus:border-none focus:outline-[#58628325]"
+                  ></input>
+                  <input
+                    type="url"
+                    value={validUrls.url2}
+                    onChange={(event) =>
+                      setValidUrls({ ...validUrls, url2: event.target.value })
+                    }
+                    className="grid col-span-12 rounded-xl w-full focus:border-none focus:outline-[#58628325]"
+                  ></input>
+                  <input
+                    type="url"
+                    value={validUrls.url3}
+                    onChange={(event) =>
+                      setValidUrls({ ...validUrls, url3: event.target.value })
+                    }
+                    className="grid col-span-12 rounded-xl w-full focus:border-none focus:outline-[#58628325]"
+                  ></input>
+                </>
+              )}
+            </div>
+            <div className="flex flex-row my-[12px] justify-center w-full">
+              <button
+                onClick={handleSubmitValidUrls}
+                className="flex items-center w-[103px] justify-around text-white bg-[#298FC2] focus:ring-4 font-bold rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-2"
+              >
+                Submit
+                <img className="mx-2" src={arrowup} alt="arrow" />
+              </button>
+            </div>
           </div>
           <div className="grid col-span-2 p-[20px] bg-white rounded-lg">
-            <div className="grid grid-cols-12 h-[40px] flex items-center">
+            <div className="grid grid-cols-12 h-[40px] items-center">
               <h2 className="grid col-span-12 my-[15px] font-bold text-[#586283] text-[16px]">
                 All Inventory Outbound CSV File
               </h2>
@@ -221,7 +320,7 @@ export default function InventoryUrls() {
             </div>
           </div>
           <div className="grid col-span-2 p-[20px] bg-white rounded-lg">
-            <div className="grid grid-cols-12 h-[40px] flex items-center">
+            <div className="grid grid-cols-12 h-[40px] items-center">
               <h2 className="grid col-span-12 my-[15px] font-bold text-[#586283] text-[16px]">
                 Facebook Outbound CSV File
               </h2>
@@ -263,7 +362,7 @@ export default function InventoryUrls() {
             </div>
           </div>
           <div className="grid col-span-2 p-[20px] bg-white rounded-lg">
-            <div className="grid grid-cols-12 h-[40px] flex items-center">
+            <div className="grid grid-cols-12 h-[40px] items-center">
               <h2 className="grid col-span-12 my-[15px] font-bold text-[#586283] text-[16px]">
                 Microsoft Free Listing Outbound CSV File
               </h2>
