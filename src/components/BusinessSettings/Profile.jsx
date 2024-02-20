@@ -1,12 +1,10 @@
-import React, { useEffect, useState, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState, useRef } from "react"
 import { useRecoilState } from "recoil"
 import CollapsingButton from "../../components/Fields/CollapsingButton"
 import { CollapseRightBar } from "../../atoms/SideBars"
 import axios from "axios"
 
 import { dealerInfo } from "../../atoms/DealerAtom"
-import useAuth from "../../Hooks/useAuth"
 import check from "../../assets/images/check.svg"
 import Support from "./Support"
 import { CameraIcon } from "@heroicons/react/outline"
@@ -14,21 +12,13 @@ import { CameraIcon } from "@heroicons/react/outline"
 import supportIcon from "../../assets/images/reset.png"
 
 export default function Profile() {
-  const authPermRols = useAuth(
-    [""],
-    false,
-    ["super-admin", "admin", "Management", "Staff"],
-    true
-  )
-  const history = useNavigate()
-
-  const [success, setSuccess] = React.useState(false)
+  const [success, setSuccess] = useState(false)
   const rightMenuCollapse = useRecoilState(CollapseRightBar)[0]
   const [randomID, setRandomID] = useState("")
   const [address, setAddress] = useState("")
-  const [dealerGroup, setDealerGroup] = React.useState("")
-  const [alertInfoGroup, setAlertInfoGroup] = React.useState(false)
-  const [alertInfoProfile, setAlertInfoProfile] = React.useState(false)
+  const [dealerGroup, setDealerGroup] = useState("")
+  const [alertInfoGroup, setAlertInfoGroup] = useState(false)
+  const [alertInfoProfile, setAlertInfoProfile] = useState(false)
   const [previosProfile, setPreviousProfile] = useState({
     dealerID: 1,
     dealerGroupID: 1,
@@ -46,6 +36,8 @@ export default function Profile() {
     dealergroup: false,
     tierLevel: false,
     randomID: "XXXXXXXXXX",
+    latitude: null,
+    longitude: null,
   })
   const [profile, setProfile] = useState({
     dealerID: 1,
@@ -64,19 +56,10 @@ export default function Profile() {
     dealergroup: false,
     tierLevel: false,
     randomID: "XXXXXXXXXX",
+    latitude: null,
+    longitude: null,
   })
   const [dealerInfoValue, setDealerInfoValue] = useRecoilState(dealerInfo)
-
-  useEffect(() => {
-    if (!authPermRols[0]) {
-      history("/login")
-      return null
-    }
-    if (!authPermRols[2]) {
-      history(-1)
-      return null
-    }
-  }, [])
 
   const filePickerRef = useRef(null)
   const addImageToPost = (e) => {
@@ -113,6 +96,8 @@ export default function Profile() {
         dealergroup: false,
         tierLevel: dealerInfoValue.tierLevel,
         randomID: dealerInfoValue.random_id,
+        longitude: dealerInfoValue.longitude,
+        latitude: dealerInfoValue.latitude,
       }
       setProfile(initialProfile)
       setPreviousProfile(initialProfile)
@@ -177,6 +162,8 @@ export default function Profile() {
       formData.append("City", profile.city)
       formData.append("ZipCode", profile.zipCode)
       formData.append("State", profile.state)
+      formData.append("latitude", profile.latitude)
+      formData.append("longitude", profile.longitude)
       const file = document.getElementById("businessLogoUrl").files[0]
       file
         ? formData.append("BusinessLogo", file)
@@ -215,6 +202,8 @@ export default function Profile() {
               dealergroup: false,
               tierLevel: dealerLoc.tierLevel,
               randomID: dealerLoc.random_id,
+              latitude: dealerLoc.latitude,
+              longitude: dealerLoc.longitude,
             }
             setPreviousProfile(newProfile)
             setTimeout(() => {
@@ -442,6 +431,28 @@ export default function Profile() {
                   className="grid col-span-10 rounded-xl w-full p-[16px]  focus:outline-[#58628325] ml-[15px]"
                 ></input>
               </div>
+              <div className="grid grid-cols-12 mb-[12px] pr-[20px]  justify-start w-full items-center">
+                <h3 className="grid col-span-2 font-bold text-[#586283]">
+                  Latitude
+                </h3>
+                <input
+                  name="latitude"
+                  onChange={(event) => handleChange(event)}
+                  value={profile.latitude}
+                  className="grid col-span-10 rounded-xl w-full p-[16px]  focus:outline-[#58628325] ml-[15px]"
+                ></input>
+              </div>
+              <div className="grid grid-cols-12 mb-[12px] pr-[20px]  justify-start w-full items-center">
+                <h3 className="grid col-span-2 font-bold text-[#586283]">
+                  Longitude
+                </h3>
+                <input
+                  name="longitude"
+                  onChange={(event) => handleChange(event)}
+                  value={profile.longitude}
+                  className="grid col-span-10 rounded-xl w-full p-[16px]  focus:outline-[#58628325] ml-[15px]"
+                ></input>
+              </div>
             </div>
             <div className="grid col-span-1 p-[20px] bg-white rounded-lg">
               <div>
@@ -588,7 +599,7 @@ export default function Profile() {
         ) : (
           <div className="grid grid-cols-2 gap-4 h-[80vh] mt-[20px] bg-[#EAEFF5] rounded-xl w-1/2">
             <div className="grid col-span-2 p-[20px] h-[100px]  rounded-lg">
-              <div className="grid grid-cols-12 mb-[12px] py-[20px] w-full flex flex-row justify-center items-center">
+              <div className="grid grid-cols-12 mb-[12px] py-[20px] w-full flex-row justify-center items-center">
                 <h3 className="grid col-span-2 font-bold text-[#586283]">
                   Platform ID
                 </h3>
@@ -596,7 +607,7 @@ export default function Profile() {
                   {randomID}
                 </p>
               </div>
-              <div className="grid grid-cols-12 mb-[12px] py-[20px] w-full flex flex-row justify-center items-center">
+              <div className="grid grid-cols-12 mb-[12px] py-[20px] w-full flex-row justify-center items-center">
                 <h3 className="grid col-span-2 font-bold text-[#586283]">
                   Dealer group name
                 </h3>
@@ -617,7 +628,7 @@ export default function Profile() {
                   </label>
                 ) : null}
               </div>
-              <div className="grid grid-cols-12 mb-[12px] py-[20px] w-full flex flex-row justify-center items-center">
+              <div className="grid grid-cols-12 mb-[12px] py-[20px] w-full flex-row justify-center items-center">
                 <h3 className="grid col-span-2 font-bold text-[#586283]">
                   Address
                 </h3>

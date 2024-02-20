@@ -22,6 +22,17 @@ import {
 } from "../../util/changeFormat"
 
 function descendingComparator(a, b, orderBy) {
+  if (orderBy.includes(".")) {
+    const orderBy1 = orderBy.split(".")[0]
+    const orderBy2 = orderBy.split(".")[1]
+    if (b[orderBy1][orderBy2] < a[orderBy1][orderBy2]) {
+      return -1
+    }
+    if (b[orderBy1][orderBy2] > a[orderBy1][orderBy2]) {
+      return 1
+    }
+    return 0
+  }
   if (b[orderBy] < a[orderBy]) {
     return -1
   }
@@ -48,27 +59,6 @@ function stableSort(array, comparator) {
   })
   return stabilizedThis.map((el) => el[0])
 }
-
-// {
-//   "GenericMasterID": 2012,
-//   "DataProviderID": 1,
-//   "days_in_stock": 6,
-//   "vin": "1FTER4FH8NLD22391",
-//   "make": "Ford",
-//   "model": "Ranger",
-//   "year": 2022,
-//   "mileage_value": 0,
-//   "mileage_unit": "MI",
-//   "fuel_type": "GASOLINE",
-//   "body_style": "TRUCK",
-//   "drivetrain": "4X4",
-//   "price": "43420",
-//   "sale_price": "43420",
-//   "msrp": "43420",
-//   "joined_images_urls": "https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/88f2666bbf594f16afa4947f8ed154fe.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/2613777dd1c04d54adcbad5da3a9b7d0.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/336615676fa6484888fb0671a9701e92.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/8c368e61f2844791a4bbbb7a3f86d2cd.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/d08e5c6ea0e647319a8e48c543d385c3.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/f7e3f5f25ed74972a9a9bcf76c76974f.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/2d5d18f017c84bafb24d18d208f4bd12.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/62641f2c8bbb4715883b92322699368f.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/558615d8f89d44fa82a1be3783e16a11.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/ad7b60eacee0490485f6c751d95bc6a0.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/c942160d2f174cfd9b76f10975665de8.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/927bc2f981b84de39fece8438090f4ac.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/21e5b7ea7efd4e36bfc7f3ae4a00e999.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/d96a881753254e9a98b6dd81a8618cdc.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/5115dd4351ab404a9ea2dacfe341c5c2.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/12f40681775d4c9a94d344e3e65f6f93.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/0ff4fdc1409642c69360b2399516119c.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/374c86cba0b84ce7b08d848eb2cf1301.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/7e1b8ef352574351a6bac28374c4f24b.jpg|https://content.homenetiol.com/2003078/2212532/~resize-fit.640x640~canvas-size.640x640xffffff/380d6a84c4e54dfba71d1d9a92f5166b.jpg|",
-//   "views": 0,
-//   "imageCount": 21
-// },
 
 const headCellsInventory = [
   {
@@ -147,7 +137,7 @@ const headCellsInventory = [
     label: "MSRP",
   },
   {
-    id: "vdp_url",
+    id: "final_url",
     numeric: true,
     disablePadding: false,
     label: "VDP Url",
@@ -266,6 +256,137 @@ const headCellsSold = [
     label: "MSRP",
   },
   {
+    id: "final_url",
+    numeric: true,
+    disablePadding: false,
+    label: "VDP Url",
+  },
+  {
+    id: "trim",
+    numeric: true,
+    disablePadding: false,
+    label: "Trim",
+  },
+  {
+    id: "sale_price",
+    numeric: true,
+    disablePadding: false,
+    label: "Other Price",
+  },
+  {
+    id: "fuel_type",
+    numeric: false,
+    disablePadding: false,
+    label: "Fuel",
+  },
+  {
+    id: "drivetrain",
+    numeric: false,
+    disablePadding: false,
+    label: "Drive Train",
+  },
+]
+const headCellsIrregular = [
+  {
+    id: "uniquesLog.slug",
+    numeric: false,
+    disablePadding: true,
+    label: "Failure Description",
+  },
+  {
+    id: "uniquesLog.irregularDate",
+    numeric: false,
+    disablePadding: true,
+    label: "Irregular Date",
+  },
+  {
+    id: "imageCount",
+    width: 300,
+    numeric: true,
+    disablePadding: true,
+    label: "#Image Count",
+  },
+  {
+    id: "days_in_stock",
+    width: 300,
+    numeric: true,
+    disablePadding: true,
+    label: "Days on Lot",
+  },
+  {
+    id: "stockNumber",
+    numeric: false,
+    disablePadding: true,
+    label: "Stock Number",
+  },
+  {
+    id: "vin",
+    numeric: false,
+    disablePadding: true,
+    label: "Vin",
+  },
+  {
+    id: "make",
+    numeric: false,
+    disablePadding: true,
+    label: "Make",
+  },
+  {
+    id: "model",
+    numeric: false,
+    disablePadding: true,
+    label: "Model",
+  },
+  {
+    id: "year",
+    numeric: true,
+    disablePadding: true,
+    label: "Year",
+  },
+  {
+    id: "mileage_value",
+    numeric: true,
+    disablePadding: true,
+    label: "Mileage",
+  },
+  {
+    id: "body_style",
+    numeric: false,
+    disablePadding: false,
+    label: "Body Style",
+  },
+
+  {
+    id: "state_of_vehicle",
+    numeric: false,
+    disablePadding: false,
+    label: "Type",
+  },
+  {
+    id: "price",
+    numeric: true,
+    disablePadding: false,
+    label: "Price",
+  },
+  {
+    id: "msrp",
+    numeric: true,
+    disablePadding: false,
+    label: "MSRP",
+  },
+  {
+    id: "final_url",
+    numeric: true,
+    disablePadding: false,
+    label: "VDP Url",
+  },
+  {
+    id: "trim",
+    numeric: true,
+    disablePadding: false,
+    label: "Trim",
+  },
+  {
     id: "sale_price",
     numeric: true,
     disablePadding: false,
@@ -313,31 +434,32 @@ function EnhancedTableHead(props) {
             }}
           />
         </TableCell>
-        {(view === "sold" ? headCellsSold : headCellsInventory).map(
-          (headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={"center"}
-              padding={headCell.disablePadding ? "none" : "normal"}
-              sortDirection={orderBy === headCell.id ? order : false}
+        {(view === "sold"
+          ? headCellsSold
+          : view === "irregular"
+          ? headCellsIrregular
+          : headCellsInventory
+        ).map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={"center"}
+            padding={headCell.disablePadding ? "none" : "normal"}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : "asc"}
+              onClick={createSortHandler(headCell.id)}
             >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          )
-        )}
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
       </TableRow>
     </TableHead>
   )
@@ -481,7 +603,7 @@ export default function EnhancedTable({ rows, view }) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.GenericMasterID}
+                      key={`rows-${row.GenericMasterID}-${index}`}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -493,6 +615,22 @@ export default function EnhancedTable({ rows, view }) {
                           }}
                         />
                       </TableCell>
+                      {view === "irregular" && (
+                        <>
+                          <TableCell id="uniquesLog.slug" align="center">
+                            {row?.uniquesLog?.slug}
+                          </TableCell>
+                          <TableCell
+                            id="uniquesLog.irregularDate"
+                            align="center"
+                          >
+                            {row?.uniquesLog?.irregularDate ===
+                            "0001-01-01T00:00:00"
+                              ? ""
+                              : row?.uniquesLog?.irregularDate?.split("T")[0]}
+                          </TableCell>
+                        </>
+                      )}
                       <TableCell
                         align="center"
                         component="th"
@@ -539,25 +677,22 @@ export default function EnhancedTable({ rows, view }) {
                         {`$ ${changeCurrencyFormat(row.price)}`}
                       </TableCell>
                       <TableCell align="center">{row.msrp}</TableCell>
-                      {view === "inventory" && (
-                        <TableCell align="center">
-                          {row.final_url !== "" ? (
-                            <a
-                              href={row.final_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="underline"
-                            >
-                              Show Site
-                            </a>
-                          ) : (
-                            "No Site"
-                          )}
-                        </TableCell>
-                      )}
-                      {view === "inventory" && (
-                        <TableCell align="center">{row.trim}</TableCell>
-                      )}
+
+                      <TableCell align="center">
+                        {row.final_url !== "" ? (
+                          <a
+                            href={row.final_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline"
+                          >
+                            Show Site
+                          </a>
+                        ) : (
+                          "No Site"
+                        )}
+                      </TableCell>
+                      <TableCell align="center">{row.trim}</TableCell>
                       <TableCell align="center">
                         {`$ ${changeCurrencyFormat(row.sale_price)}`}
                       </TableCell>
