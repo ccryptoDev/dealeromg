@@ -6,6 +6,7 @@ import {
   FinalWhereClsCBSale,
   FinalWhereClsCBService,
   recordCountNumberCB,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
 import {
   filtersValuesState,
@@ -34,6 +35,9 @@ function ResetFiltersButton({ audienceCatBuilder }) {
   const setSQLService = useRecoilState(FinalWhereClsCBService)[1]
   const setRecordCount = useRecoilState(
     audienceCatBuilder ? recordCountNumber : recordCountNumberCB
+  )[1]
+  const setRecordCountActivityNumber = useRecoilState(
+    recordCountNumberActivityCB
   )[1]
   const dealer = useRecoilState(dealerInfo)[0]
   const resetRecordCountNumber = async (audienceCatBuilder) => {
@@ -65,6 +69,17 @@ function ResetFiltersButton({ audienceCatBuilder }) {
         amountExcludeService: null,
       })
     } else {
+      const resActivity = await axios.post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        { ...body }
+      )
+      const resBigQueryActivity = resActivity.data
+      const noActivitySales = resBigQueryActivity[0]?.numpid
+      const noActivityService = resBigQueryActivity[1]?.numpid
+      setRecordCountActivityNumber({
+        valueSales: noActivitySales,
+        valueService: noActivityService,
+      })
       setRecordCount({ value: recordCountNumber })
     }
   }
