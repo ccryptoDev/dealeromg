@@ -141,7 +141,7 @@ export default function VehYear() {
               getAriaValueText={valuetext}
               step={1}
               min={1960}
-              max={2023}
+              max={2024}
             />
             <h2 className="text-xs mb-3 font-bold text-[#586283]">
               <span className="font-medium">Selected Range: </span>
