@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
 import axios from "axios"
 
 import Support from "./Support"
-import useAuth from "../../Hooks/useAuth"
 import check from "../../assets/images/check.svg"
 import alert from "../../assets/images/alert.svg"
 import arrowup from "../../assets/images/arrowup.png"
@@ -14,20 +12,12 @@ import { CollapseRightBar } from "../../atoms/SideBars"
 import CollapsingButton from "../../components/Fields/CollapsingButton"
 
 import supportIcon from "../../assets/images/reset.png"
-import { numArray } from "../../util/makeNumberArray"
 
 export default function AlertsControl() {
-  const authPermRols = useAuth(
-    [""],
-    false,
-    ["super-admin", "admin", "Management", "Staff"],
-    true
-  )
-  const history = useNavigate()
   const [success, setSuccess] = useState(false)
   const rightMenuCollapse = useRecoilState(CollapseRightBar)[0]
   const [dealerInfoValue] = useRecoilState(dealerInfo)
-  const porcentageArray = numArray(90, 10)
+  const porcentageArray = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
   // const daysArray = numArray(150, 10)
 
   const [alerts, setAlerts] = useState({
@@ -35,6 +25,7 @@ export default function AlertsControl() {
     noImageUrl: 5,
     noImageUrlEmail: false,
     pageErrorTrakingEmail: false,
+    urlValidation: 5,
     urlValidationEmail: false,
     agingFileEmail: false,
     recordCountTreshold: 5,
@@ -52,6 +43,7 @@ export default function AlertsControl() {
         noImageUrl,
         noImageUrlEmail,
         pageErrorTrakingEmail,
+        urlValidation,
         urlValidationEmail,
         agingFileEmail,
         recordCountTreshold,
@@ -64,6 +56,7 @@ export default function AlertsControl() {
         noImageUrl,
         noImageUrlEmail,
         pageErrorTrakingEmail,
+        urlValidation,
         urlValidationEmail,
         agingFileEmail,
         recordCountTreshold,
@@ -77,14 +70,6 @@ export default function AlertsControl() {
   }
 
   useEffect(() => {
-    if (!authPermRols[0]) {
-      history("/login")
-      return null
-    }
-    if (!authPermRols[2]) {
-      history(-1)
-      return null
-    }
     getAlertStatusFromDealer()
   }, [])
 
@@ -101,6 +86,7 @@ export default function AlertsControl() {
       noImageUrl: +alerts.noImageUrl,
       noImageUrlEmail: alerts.noImageUrlEmail,
       pageErrorTrakingEmail: alerts.pageErrorTrakingEmail,
+      urlValidation: +alerts.urlValidation,
       urlValidationEmail: alerts.urlValidationEmail,
       agingFileEmail: alerts.agingFileEmail,
       recordCountTreshold: +alerts.recordCountTreshold,
@@ -170,7 +156,7 @@ export default function AlertsControl() {
               >
                 {porcentageArray.map((opt) => (
                   <option value={opt} key={opt}>
-                    {opt} %
+                    {opt === 0 ? "Inactive" : `${opt}%`}
                   </option>
                 ))}
               </select>
@@ -194,22 +180,6 @@ export default function AlertsControl() {
                 className="grid col-span-1 col-start-3 rounded-xl w-[90%] p-[16px] focus:outline-[#58628325]"
                 value={alerts.pageErrorTrakingEmail}
                 name="pageErrorTrakingEmail"
-                onChange={(event) => handleChange(event)}
-              >
-                <option value={true} selected="selected">
-                  On
-                </option>
-                <option value={false}>Off</option>
-              </select>
-            </div> */}
-            {/* <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
-              <h3 className="grid col-span-1 font-bold text-[#586283] text-[16px]">
-                URL Validation
-              </h3>
-              <select
-                className="grid col-span-1 col-start-3 rounded-xl w-[90%] p-[16px] focus:outline-[#58628325]"
-                value={alerts.urlValidationEmail}
-                name="urlValidationEmail"
                 onChange={(event) => handleChange(event)}
               >
                 <option value={true} selected="selected">
@@ -246,7 +216,7 @@ export default function AlertsControl() {
               >
                 {porcentageArray.map((opt) => (
                   <option value={opt} key={opt}>
-                    {opt} %
+                    {opt === 0 ? "Inactive" : `${opt}%`}
                   </option>
                 ))}
               </select>
@@ -254,6 +224,34 @@ export default function AlertsControl() {
                 className="grid col-span-1 rounded-xl w-[90%] p-[16px] focus:outline-[#58628325]"
                 value={alerts.recordCountTresholdEmail}
                 name="recordCountTresholdEmail"
+                onChange={(event) => handleChange(event)}
+              >
+                <option value={true} selected="selected">
+                  On
+                </option>
+                <option value={false}>Off</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-3 mb-[12px] pr-[20px] justify-start w-full items-center">
+              <h3 className="grid col-span-1 font-bold text-[#586283] text-[16px]">
+                VDP URL Validation Threshold
+              </h3>
+              <select
+                className="grid col-span-1 w-[90%] rounded-xl p-[16px] focus:outline-[#58628325]"
+                value={alerts.urlValidation}
+                name="urlValidation"
+                onChange={(event) => handleChange(event)}
+              >
+                {porcentageArray.map((opt) => (
+                  <option value={opt} key={opt}>
+                    {opt === 0 ? "Inactive" : `${opt}%`}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="grid col-span-1 rounded-xl w-[90%] p-[16px] focus:outline-[#58628325]"
+                value={alerts.urlValidationEmail}
+                name="urlValidationEmail"
                 onChange={(event) => handleChange(event)}
               >
                 <option value={true} selected="selected">

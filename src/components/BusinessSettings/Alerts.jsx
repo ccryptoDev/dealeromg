@@ -20,16 +20,6 @@ export default function Alerts() {
   const [resentAlerts, setResentAlerts] = useState([])
   const [historicalAlerts, setHistoricalAlerts] = useState([])
 
-  const changeString = (string) => {
-    const newStr = string.replaceAll("_", " ").replaceAll("-", " ")
-    const arr = newStr.split(" ")
-    for (let i = 0; i < arr.length; i++) {
-      arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1)
-    }
-    const str2 = arr.join(" ")
-    return str2
-  }
-
   const changeDateFormat = (date) => {
     const newFormat = new Date(date)
 
@@ -103,7 +93,7 @@ export default function Alerts() {
     rowsHistoricalAlertTable.push(
       createHistoricalAlertTable(
         alert.id,
-        changeString(alert.alertType.slug),
+        alert.alertType.name,
         `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID}`,
         changeDateFormat(alert.createdAt)
       )
@@ -115,7 +105,7 @@ export default function Alerts() {
     rowsRecentAlertTable.push(
       createHistoricalAlertTable(
         alert.id,
-        changeString(alert.alertType.slug),
+        alert.alertType.name,
         `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID}`,
         changeDateFormat(alert.createdAt)
       )
