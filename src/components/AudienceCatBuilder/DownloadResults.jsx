@@ -32,6 +32,9 @@ function DownloadResults() {
   const csvDataDownload = () => {
     setShowNamingFile(false)
     setFacebookSpinner(true)
+    const dealerIDLog = JSON.parse(
+      localStorage.getItem("permissionsDealerOMG")
+    ).userID
     axios({
       url: `${process.env.REACT_APP_API_DOMG}BigQuery/getConsumersListCSV`,
       method: "POST",
@@ -45,6 +48,8 @@ function DownloadResults() {
         sqlSales: filtersValues.excludeSales
           ? `${filtersValues.excludeSales}`
           : "",
+        fileName: `${fileName}.csv`,
+        userId: dealerIDLog,
       },
     }).then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]))
