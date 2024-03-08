@@ -20,6 +20,7 @@ export const dealerInfo = atom({
     crmCompanyUrl: "",
     crmCompanyID: null,
     fb_page_id: null,
+    fbaDaccountID: null,
     quickBooksAccountID: null,
     googleAnalytics_GTM_ID: null,
     webStreamID: null,
