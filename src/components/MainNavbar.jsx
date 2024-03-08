@@ -1,5 +1,6 @@
 import { useNavigate, Link } from "react-router-dom"
 import { useState, useEffect } from "react"
+import axios from "axios"
 
 import Settings from "./Settings"
 // Images
@@ -10,9 +11,13 @@ function MainNavbar() {
   const [userData, setUserData] = useState({})
 
   const logOut = () => {
-    localStorage.removeItem("tokenDealerOMG")
-    localStorage.removeItem("permissionsDealerOMG")
-    history("/login")
+    axios
+      .post(`${process.env.REACT_APP_API_DOMG}Logout?userId=${userData.userID}`)
+      .then(() => {
+        localStorage.removeItem("tokenDealerOMG")
+        localStorage.removeItem("permissionsDealerOMG")
+        history("/login")
+      })
   }
 
   useEffect(() => {
