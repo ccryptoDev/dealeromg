@@ -23,6 +23,7 @@ export default function Connect() {
     dashThisURL: dealerInfoValue.dashThisURL,
     dealerVaultID: dealerInfoValue.rooftopID,
     fbPageID: dealerInfoValue.fb_page_id,
+    fbaDaccountID: dealerInfoValue.fbaDaccountID,
   })
   const [success, setSuccess] = useState(false)
   const rightMenuCollapse = useRecoilState(CollapseRightBar)[0]
@@ -57,6 +58,7 @@ export default function Connect() {
     formData.append("RoofTopID", dealerConnections.dealerVaultID)
     formData.append("ProgramID", "DVV01397")
     formData.append("fb_page_id", dealerConnections.fbPageID)
+    formData.append("fbad_account_id", dealerConnections.fbaDaccountID)
     axios
       .patch(`${process.env.REACT_APP_API_DOMG}Dealers`, formData, {
         headers: {
@@ -243,6 +245,21 @@ export default function Connect() {
               onChange={handleChange}
               value={
                 dealerConnections.fbPageID ? dealerConnections.fbPageID : ""
+              }
+              className="grid col-span-10 rounded-xl w-[80%] p-[16px]  focus:outline-[#58628325] ml-[15px]"
+            ></input>
+          </div>
+          <div className="grid grid-cols-12 mb-[12px] justify-start w-full items-center">
+            <h3 className="grid col-span-2 font-bold text-[#586283]">
+              Facebook Account ID #
+            </h3>
+            <input
+              name="fbaDaccountID"
+              onChange={handleChange}
+              value={
+                dealerConnections.fbaDaccountID
+                  ? dealerConnections.fbaDaccountID
+                  : ""
               }
               className="grid col-span-10 rounded-xl w-[80%] p-[16px]  focus:outline-[#58628325] ml-[15px]"
             ></input>

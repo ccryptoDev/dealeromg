@@ -42,6 +42,7 @@ export default function InventoryUrls() {
     soldUrlMSFree: "",
     inventoryUrlAll: "",
   })
+  const [error, setError] = useState("")
 
   const getcrmCompanyID = () => {
     axios
@@ -155,6 +156,50 @@ export default function InventoryUrls() {
   }
 
   const handleSubmitValidUrls = () => {
+    const HTTP_STRING = "http://"
+    const WWW_STRING = "www."
+    const DOT_STRING = "."
+    const HTTPS_STRING = "https://"
+    if (
+      validUrls.url1.toLowerCase().includes(HTTP_STRING) ||
+      validUrls.url2.toLowerCase().includes(HTTP_STRING) ||
+      validUrls.url3.toLowerCase().includes(HTTP_STRING)
+    ) {
+      setError(
+        "Form did not submit. The protocols HTTP or www text is not required. Use only the domain and path."
+      )
+      return
+    }
+    if (
+      validUrls.url1.toLowerCase().includes(HTTPS_STRING) ||
+      validUrls.url2.toLowerCase().includes(HTTPS_STRING) ||
+      validUrls.url3.toLowerCase().includes(HTTPS_STRING)
+    ) {
+      setError(
+        "Form did not submit. The protocols HTTPS or www text is not required. Use only the domain and path."
+      )
+      return
+    }
+    if (
+      validUrls.url1.toLowerCase().includes(WWW_STRING) ||
+      validUrls.url2.toLowerCase().includes(WWW_STRING) ||
+      validUrls.url3.toLowerCase().includes(WWW_STRING)
+    ) {
+      setError(
+        "Form did not submit. The protocols HTTP or www text is not required. Use only the domain and path."
+      )
+      return
+    }
+    if (
+      (validUrls.url1 && !validUrls.url1.toLowerCase().includes(DOT_STRING)) ||
+      (validUrls.url2 && !validUrls.url2.toLowerCase().includes(DOT_STRING)) ||
+      (validUrls.url3 && !validUrls.url3.toLowerCase().includes(DOT_STRING))
+    ) {
+      setError(
+        "Form did not submit. You’re missing a period in the domain address."
+      )
+      return
+    }
     axios
       .post(
         `${process.env.REACT_APP_API_DOMG}api/AlertParameters/SetValidUrls`,
@@ -185,6 +230,15 @@ export default function InventoryUrls() {
               <h3 className="text-white font-bold text-[15px]">
                 Your inventory was saved successfully.
               </h3>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {error ? (
+          <div className="flex w-full justify-center">
+            <div className="bg-red-600 px-2 py-2 rounded-md flex justify-center mb-4 w-[550px]">
+              <h3 className="text-white font-bold text-[15px]">{error}</h3>
             </div>
           </div>
         ) : (
