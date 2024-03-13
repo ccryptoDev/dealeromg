@@ -1,4 +1,5 @@
 import React, { useEffect } from "react"
+import axios from "axios"
 import { Link, useNavigate, matchPath, useLocation } from "react-router-dom"
 
 import useAuth from "../../Hooks/useAuth"
@@ -33,9 +34,13 @@ function SecondNavbar() {
   }, [])
 
   const logOut = () => {
-    localStorage.removeItem("tokenDealerOMG")
-    localStorage.removeItem("permissionsDealerOMG")
-    history("/login")
+    axios
+      .post(`${process.env.REACT_APP_API_DOMG}Logout?userId=${userData.userID}`)
+      .then(() => {
+        localStorage.removeItem("tokenDealerOMG")
+        localStorage.removeItem("permissionsDealerOMG")
+        history("/login")
+      })
   }
 
   const pathP = { path: "/business-settings/profile" }
