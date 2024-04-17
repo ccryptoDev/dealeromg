@@ -45,6 +45,9 @@ function DownloadResults() {
     ).csv
     setShowNamingFile(false)
     setFacebookSpinner(true)
+    const dealerIDLog = JSON.parse(
+      localStorage.getItem("permissionsDealerOMG")
+    ).userID
     axios({
       url: `${process.env.REACT_APP_API_DOMG}BigQuery/${url}`,
       method: "POST",
@@ -65,6 +68,8 @@ function DownloadResults() {
             ? SalesFinalWhereCls.sql.replace(" AND 1=0", "")
             : SalesFinalWhereCls.sql,
         roofTopID: dealer.rooftopID,
+        fileName: `${fileName}.csv`,
+        userId: dealerIDLog,
       },
     }).then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]))
