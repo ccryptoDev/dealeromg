@@ -206,7 +206,7 @@ function SaveBuildRequest() {
               </label>
             </div>
           </div>
-          <div className="px-4 flex flex-col">
+          {/* <div className="px-4 flex flex-col">
             <h3 className="font-bold text-white text-[17px] mt-2">
               Inventory Control
             </h3>
@@ -242,7 +242,7 @@ function SaveBuildRequest() {
                 </label>
               </div>
             </div>
-          </div>{" "}
+          </div>{" "} */}
           <button
             type="button"
             onClick={CSVDownloadAllInventory}
