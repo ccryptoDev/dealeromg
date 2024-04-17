@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react"
+import axios from "axios"
 import Box from "@mui/material/Box"
 import InputLabel from "@mui/material/InputLabel"
 import MenuItem from "@mui/material/MenuItem"
@@ -8,13 +9,13 @@ import arrowup from "../../assets/images/arrowup.png"
 import emptyFolder from "../../assets/images/emptyfolder.png"
 import { useRecoilState } from "recoil"
 import {
-  valuesInventoryBuilder,
+  // valuesInventoryBuilder,
   resultValuesInvBuilder,
   filterInventoryBuilder,
   refreshInventoryBuilder,
 } from "../../atoms/InventoryBuilderAtom.js"
 import {
-  valuesSoldTable,
+  // valuesSoldTable,
   filterSoldTable,
   refreshSold,
 } from "../../atoms/SoldTableAtom"
@@ -42,39 +43,43 @@ const VehMakeModelFilter = ({
   const [filter, setFilter] = useState("")
   const [vehMake, setVehMake] = useState([])
   const [vehModel, setVehModel] = useState([])
-  const inventoryBuilder = useRecoilState(
-    view !== "sold" ? valuesInventoryBuilder : valuesSoldTable
-  )[0]
+  // const inventoryBuilder = useRecoilState(
+  //   view !== "sold" ? valuesInventoryBuilder : valuesSoldTable
+  // )[0]
   const makesFilter = []
   const modelFilter = []
   const [resultFilter, setResultFilter] = useRecoilState(resultValuesInvBuilder)
 
   useEffect(() => {
-    const makesResponse = inventoryBuilder.makeList
     const response = []
-    for (let i = 0; i < makesResponse.length; i++) {
-      let result = {
-        name:
-          makesResponse[i].make.charAt(0).toUpperCase() +
-          makesResponse[i].make.slice(1).toLowerCase(),
-        id: i,
-        selected: false,
-      }
-      if (makes.length) {
-        makes.map((make) => {
-          make.toLowerCase() === makesResponse[i].make.toLowerCase() &&
-            (result = { ...result, selected: true })
-          return null
-        })
-      }
-      response.push(result)
-    }
-    setVehMake(response)
-  }, [inventoryBuilder])
+    axios
+      .get(`${process.env.REACT_APP_API_DOMG}Auto/getManufacturersList`)
+      .then((res) => {
+        const makesResponse = res.data
+        for (let i = 0; i < makesResponse.length; i++) {
+          let result = {
+            name:
+              makesResponse[i].make.charAt(0).toUpperCase() +
+              makesResponse[i].make.slice(1).toLowerCase(),
+            id: i,
+            selected: false,
+          }
+          if (makes?.length) {
+            makes.map((make) => {
+              make.toLowerCase() === makesResponse[i].make.toLowerCase() &&
+                (result = { ...result, selected: true })
+              return null
+            })
+          }
+          response.push(result)
+        }
+        setVehMake(response)
+      })
+  }, [])
 
-  useEffect(() => {
-    if (makes?.length > 0) handleMakesFilter()
-  }, [vehMake])
+  // useEffect(() => {
+  //   if (makes?.length > 0) handleMakesFilter()
+  // }, [vehMake])
 
   const handleMakesFilter = () => {
     for (let i = 0; i < vehMake.length; i++) {
@@ -90,49 +95,101 @@ const VehMakeModelFilter = ({
     setShowMake(false)
   }
 
+  // const handleModelsFilter = () => {
+  //   const modelsV1 = []
+  //   for (let i = 0; i < inventoryBuilder.modelList.length; i++) {
+  //     for (let j = 0; j < makesFilter.length; j++) {
+  //       if (inventoryBuilder.modelList[i].make === makesFilter[j]) {
+  //         modelsV1.push(inventoryBuilder.modelList[i])
+  //       }
+  //     }
+  //   }
+  //   const modelsVF = []
+  //   for (let i = 0; i < modelsV1.length; i++) {
+  //     let result = {
+  //       make:
+  //         modelsV1[i].make.charAt(0).toUpperCase() +
+  //         modelsV1[i].make.slice(1).toLowerCase(),
+  //       name:
+  //         modelsV1[i].model.charAt(0).toUpperCase() +
+  //         modelsV1[i].model.slice(1).toLowerCase(),
+  //       id: i,
+  //       selected: false,
+  //     }
+  //     if (models.length) {
+  //       models.map((models) => {
+  //         models.toLowerCase() === modelsV1[i].model.toLowerCase() &&
+  //           (result = { ...result, selected: true })
+  //         return null
+  //       })
+  //     }
+  //     modelsVF.push(result)
+  //   }
+  //   if (models != null) {
+  //     setModels(
+  //       modelsVF
+  //         .filter(function (item) {
+  //           return item.selected
+  //         })
+  //         .map(function (item) {
+  //           return item.name
+  //         })
+  //     )
+  //   }
+  //   setVehModel(modelsVF)
+  //   setModelsGroup(_.groupBy(modelsVF, "make"))
+  // }
+
   const handleModelsFilter = () => {
-    const modelsV1 = []
-    for (let i = 0; i < inventoryBuilder.modelList.length; i++) {
-      for (let j = 0; j < makesFilter.length; j++) {
-        if (inventoryBuilder.modelList[i].make === makesFilter[j]) {
-          modelsV1.push(inventoryBuilder.modelList[i])
-        }
-      }
-    }
-    const modelsVF = []
-    for (let i = 0; i < modelsV1.length; i++) {
-      let result = {
-        make:
-          modelsV1[i].make.charAt(0).toUpperCase() +
-          modelsV1[i].make.slice(1).toLowerCase(),
-        name:
-          modelsV1[i].model.charAt(0).toUpperCase() +
-          modelsV1[i].model.slice(1).toLowerCase(),
-        id: i,
-        selected: false,
-      }
-      if (models.length) {
-        models.map((models) => {
-          models.toLowerCase() === modelsV1[i].model.toLowerCase() &&
-            (result = { ...result, selected: true })
-          return null
-        })
-      }
-      modelsVF.push(result)
-    }
-    if (models != null) {
-      setModels(
-        modelsVF
-          .filter(function (item) {
-            return item.selected
-          })
-          .map(function (item) {
-            return item.name
-          })
+    const headers = { "Content-Type": "application/json" }
+    const makesFilterJson = JSON.stringify(
+      makesFilter.map((it) => {
+        return `${it.toUpperCase()}`
+      })
+    )
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}Auto/getModelsByMakeList`,
+        makesFilterJson,
+        { headers }
       )
-    }
-    setVehModel(modelsVF)
-    setModelsGroup(_.groupBy(modelsVF, "make"))
+      .then((res) => {
+        const modelsV1 = res.data
+        const modelsVF = []
+        for (let i = 0; i < modelsV1.length; i++) {
+          let result = {
+            make:
+              modelsV1[i].make.charAt(0).toUpperCase() +
+              modelsV1[i].make.slice(1).toLowerCase(),
+            name:
+              modelsV1[i].model.charAt(0).toUpperCase() +
+              modelsV1[i].model.slice(1).toLowerCase(),
+            id: i,
+            selected: false,
+          }
+          if (models.length) {
+            models.map((models) => {
+              models.toLowerCase() === modelsV1[i].model.toLowerCase() &&
+                (result = { ...result, selected: true })
+              return null
+            })
+          }
+          modelsVF.push(result)
+        }
+        if (models != null) {
+          setModels(
+            modelsVF
+              .filter(function (item) {
+                return item.selected
+              })
+              .map(function (item) {
+                return item.name.toUpperCase()
+              })
+          )
+        }
+        setVehModel(modelsVF)
+        setModelsGroup(_.groupBy(modelsVF, "make"))
+      })
   }
 
   // Makes
