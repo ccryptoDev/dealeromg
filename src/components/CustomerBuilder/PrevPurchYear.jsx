@@ -8,6 +8,7 @@ import {
   FinalWhereClsCBService,
   SpinerCB,
   recordCountNumberCB,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
 import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
@@ -47,8 +48,11 @@ const PrevPurchYear = () => {
   const [AdWhereClsAM, setAdWhereClsAM] = useRecoilState(FinalWhereClsCBSale)
   const sqlService = useRecoilState(FinalWhereClsCBService)[0]
   const setSpiner = useRecoilState(SpinerCB)[1]
-  const setRecordCount = useRecoilState(recordCountNumberCB)[1]
-  const { neverPurchased, nevSerPrevPurch } = filtersValues
+  const setRecordCountNumber = useRecoilState(recordCountNumberCB)[1]
+  const setRecordCountActivityNumber = useRecoilState(
+    recordCountNumberActivityCB
+  )[1]
+  const { neverPurchased, nevSerPrevPurch, nevSerDateRange } = filtersValues
 
   useEffect(() => {
     if (filtersValues.prevPurchYear != null) {
@@ -72,7 +76,11 @@ const PrevPurchYear = () => {
 
   const sendRequestCount = (recordRequestBody) => {
     const sqlClean = { sql: AdWhereClsAM.sql.replace(" AND 1=0", "") }
-    const url = bigQueryURL(neverPurchased, nevSerPrevPurch).url
+    const url = bigQueryURL(
+      neverPurchased,
+      nevSerPrevPurch,
+      nevSerDateRange
+    ).url
     setSpiner(true)
     const WhereClsAM = createSQLSliderSentence(
       recordRequestBody,
@@ -83,16 +91,32 @@ const PrevPurchYear = () => {
       false
     )
     setAdWhereClsAM({ sql: WhereClsAM })
+    const bodyRequest = {
+      sqlSales: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
+      sqlService: sqlService.sql ? sqlService.sql : " AND 1=0",
+      roofTopID: dealerInfoValue.rooftopID,
+    }
     axios
-      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlSales: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
-        sqlService: sqlService.sql ? sqlService.sql : " AND 1=0",
-        roofTopID: dealerInfoValue.rooftopID,
-      })
+      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, bodyRequest)
       .then((res) => {
         const resBigQuery = res.data[0]
         const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
+        setRecordCountNumber({ value: recordCountNumber })
+        setSpiner(false)
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivityNumber({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
         setSpiner(false)
       })
   }
@@ -119,7 +143,7 @@ const PrevPurchYear = () => {
               getAriaValueText={valuetext}
               step={1}
               min={1960}
-              max={2023}
+              max={2024}
             />
             <h2 className="text-xs mb-3 font-bold text-[#586283]">
               <span className="font-medium">Selected Range: </span>
@@ -147,7 +171,7 @@ const PrevPurchYear = () => {
         </Box>
       </div>
       <SwitchFilter
-        next={"Services in a Date Range"}
+        next={"New/Used"}
         prev={"Vehicle Models"}
         custBuild={true}
       />
