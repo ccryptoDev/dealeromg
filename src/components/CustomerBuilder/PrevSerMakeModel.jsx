@@ -8,6 +8,7 @@ import {
   FinalWhereClsCBService,
   SpinerCB,
   FinalWhereClsCBSale,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
 import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
@@ -32,7 +33,10 @@ const PrevSerMakeModel = () => {
     recordCountValuesStateCB
   )
   const dealerInfoValue = useRecoilState(dealerInfo)[0]
-  const setRecordCount = useRecoilState(recordCountNumberCB)[1]
+  const setRecordCountNumber = useRecoilState(recordCountNumberCB)[1]
+  const setRecordCountActivityNumber = useRecoilState(
+    recordCountNumberActivityCB
+  )[1]
   const [AdWhereClsAM, setAdWhereClsAM] = useRecoilState(FinalWhereClsCBService)
   const sqlSales = useRecoilState(FinalWhereClsCBSale)[0]
   const setSpiner = useRecoilState(SpinerCB)[1]
@@ -43,7 +47,7 @@ const PrevSerMakeModel = () => {
   const [filterModel, setFilterModel] = useState("")
   const [alertMake, setAlertMake] = useState(false)
   const [alertModel, setAlertModel] = useState(false)
-  const { neverPurchased, nevSerPrevPurch } = filtersValues
+  const { neverPurchased, nevSerPrevPurch, nevSerDateRange } = filtersValues
 
   const [vehMake, setVehMake] = React.useState([])
   const [vehModel, setVehModel] = React.useState([])
@@ -114,7 +118,11 @@ const PrevSerMakeModel = () => {
   const sendRequestCountMakes = (recordRequestBody) => {
     setSpiner(true)
     const sqlClean = { sql: AdWhereClsAM.sql.replace(" AND 1=0", "") }
-    const url = bigQueryURL(neverPurchased, nevSerPrevPurch).url
+    const url = bigQueryURL(
+      neverPurchased,
+      nevSerPrevPurch,
+      nevSerDateRange
+    ).url
     const WhereClsAM = createSQLListSentence(
       recordRequestBody,
       "prevSerMake",
@@ -125,20 +133,32 @@ const PrevSerMakeModel = () => {
       false
     )
     setAdWhereClsAM({ sql: WhereClsAM })
-
+    const bodyRequest = {
+      sqlService: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
+      sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
+      roofTopID: dealerInfoValue.rooftopID,
+    }
     axios
-      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlService: WhereClsAM
-          ? WhereClsAM.replace(" AND 1=0", "")
-          : " AND 1=0",
-        sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
-        roofTopID: dealerInfoValue.rooftopID,
-      })
+      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, bodyRequest)
       .then((res) => {
         const resBigQuery = res.data[0]
-
         const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
+        setRecordCountNumber({ value: recordCountNumber })
+        setSpiner(false)
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivityNumber({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
         setSpiner(false)
       })
     return WhereClsAM
@@ -295,7 +315,11 @@ const PrevSerMakeModel = () => {
   const sendRequestCountModels = (recordRequestBody, oldBigQuery) => {
     setSpiner(true)
     const sqlClean = { sql: AdWhereClsAM.sql.replace(" AND 1=0", "") }
-    const url = bigQueryURL(neverPurchased, nevSerPrevPurch).url
+    const url = bigQueryURL(
+      neverPurchased,
+      nevSerPrevPurch,
+      nevSerDateRange
+    ).url
     const WhereClsAM = createSQLListSentence(
       recordRequestBody,
       "prevSerModel",
@@ -307,17 +331,32 @@ const PrevSerMakeModel = () => {
       oldBigQuery
     )
     setAdWhereClsAM({ sql: WhereClsAM })
-    console.log(WhereClsAM)
+    const bodyRequest = {
+      sqlService: WhereClsAM,
+      sqlSales: sqlSales.sql,
+      roofTopID: dealerInfoValue.rooftopID,
+    }
     axios
-      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlService: WhereClsAM,
-        sqlSales: sqlSales.sql,
-        roofTopID: dealerInfoValue.rooftopID,
-      })
+      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, bodyRequest)
       .then((res) => {
         const resBigQuery = res.data[0]
         const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
+        setRecordCountNumber({ value: recordCountNumber })
+        setSpiner(false)
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivityNumber({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
         setSpiner(false)
       })
   }
