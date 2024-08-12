@@ -3,33 +3,41 @@ import arrowup from "../../assets/images/arrowup.png"
 import { useRecoilState } from "recoil"
 import axios from "axios"
 import {
+  customerBuilderState,
   filtersValuesStateCB,
   SpinerCB,
   FinalWhereClsCBService,
   recordCountNumberCB,
   FinalWhereClsCBSale,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
 import { bigQueryURL } from "../../util/bigQueryURL"
 
 import SaveMessage from "../Fields/SaveMessage"
-import SwitchFilter from "../Fields/SwitchFilter"
+// import SwitchFilter from "../Fields/SwitchFilter"
 import { dealerInfo } from "../../atoms/DealerAtom"
+import defaultValues from "../../util/defaultValuesCustBuilds"
 
 const PrevSerVehNeverPurch = () => {
   const [never, setNever] = useState(false)
   const [alert, setAlert] = useState(false)
   const [filterValues, setFilterValues] = useRecoilState(filtersValuesStateCB)
   const dealerInfoValue = useRecoilState(dealerInfo)[0]
-  const setRecordCount = useRecoilState(recordCountNumberCB)[1]
+  const setRecordCountNumber = useRecoilState(recordCountNumberCB)[1]
+  const setRecordCountActivityNumber = useRecoilState(
+    recordCountNumberActivityCB
+  )[1]
   const sqlSales = useRecoilState(FinalWhereClsCBSale)[0]
   const sqlService = useRecoilState(FinalWhereClsCBService)[0]
   const setSpiner = useRecoilState(SpinerCB)[1]
-  const { neverPurchased, nevSerPrevPurch } = filterValues
+  const { neverPurchased, nevSerPrevPurch, nevSerDateRange } = filterValues
   const [url, setUrl] = useState("getDealerVaultCountBothFromBigQuery")
+  const setShow = useRecoilState(customerBuilderState)[1]
+  const values = defaultValues
 
   const handleNeverSelected = (event) => {
     setNever(!never)
-    setUrl(bigQueryURL(!neverPurchased, nevSerPrevPurch).url)
+    setUrl(bigQueryURL(!neverPurchased, nevSerPrevPurch, nevSerDateRange).url)
   }
   const handleSubmit = () => {
     if (never) {
@@ -46,26 +54,42 @@ const PrevSerVehNeverPurch = () => {
 
   const sendRequestCount = () => {
     setSpiner(true)
+    const bodyRequest = {
+      sqlService:
+        sqlService.sql === " AND 1=0" && sqlSales.sql === " AND 1=0"
+          ? ""
+          : sqlService.sql
+          ? sqlService.sql
+          : " AND 1=0",
+      sqlSales:
+        sqlService.sql === " AND 1=0" && sqlSales.sql === " AND 1=0"
+          ? ""
+          : sqlSales.sql
+          ? sqlSales.sql
+          : " AND 1=0",
+      roofTopID: dealerInfoValue.rooftopID,
+    }
     axios
-      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, {
-        sqlService:
-          sqlService.sql === " AND 1=0" && sqlSales.sql === " AND 1=0"
-            ? ""
-            : sqlService.sql
-            ? sqlService.sql
-            : " AND 1=0",
-        sqlSales:
-          sqlService.sql === " AND 1=0" && sqlSales.sql === " AND 1=0"
-            ? ""
-            : sqlSales.sql
-            ? sqlSales.sql
-            : " AND 1=0",
-        roofTopID: dealerInfoValue.rooftopID,
-      })
+      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, bodyRequest)
       .then((res) => {
         const resBigQuery = res.data[0]
         const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
+        setRecordCountNumber({ value: recordCountNumber })
+        setSpiner(false)
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivityNumber({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
         setSpiner(false)
       })
   }
@@ -77,6 +101,16 @@ const PrevSerVehNeverPurch = () => {
   useEffect(() => {
     filterValues.neverPurchased === null && setNever(false)
   }, [filterValues.neverPurchased])
+
+  const statusChange = (value) => {
+    const selectedValue = values.map((obj) => {
+      if (obj.name === value) {
+        return { ...obj, status: true }
+      }
+      return obj
+    })
+    setShow(selectedValue)
+  }
 
   return (
     <>
@@ -117,11 +151,19 @@ const PrevSerVehNeverPurch = () => {
           </button>
         </div>
       </div>
-      <SwitchFilter
-        next={"No Services in a Date Range"}
+      {/* <SwitchFilter
+        next={"Previously Purchased a Vehicle"}
         prev={"Vehicle Year"}
         custBuild={true}
-      />
+      /> */}
+      <div className="flex flex-row justify-between items-center rounded-xl bg-[#E3EBF6] px-2 mt-5">
+        <button
+          className="bg-white text-[#586283] rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-2"
+          onClick={() => statusChange("Vehicle Year")}
+        >
+          Previous Filter
+        </button>
+      </div>
     </>
   )
 }
