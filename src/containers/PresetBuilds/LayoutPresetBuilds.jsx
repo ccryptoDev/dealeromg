@@ -1,31 +1,23 @@
-import React, { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
 import { useRecoilState } from "recoil"
 
-import useAuth from "../../Hooks/useAuth"
 // Componentes
 import SecondNavbar from "../../components/SecondNavbar"
 import TabsModule from "../../components/TabsModule"
 // Containers
+import LeftSideContainer from "./LeftSideContainer"
 import RightSideContainer from "./RightSideContainer"
 import MainBodyContainer from "./MainBodyContainer"
 
-import { CollapseRightBar } from "../../atoms/SideBars"
+import { CollapseRightBar, CollapseLeftBar } from "../../atoms/SideBars"
 import CollapsingButton from "../../components/Fields/CollapsingButton"
 
+import categoryImg from "../../assets/images/categories.png"
 import resultsImg from "../../assets/images/results.png"
 
 function LayoutPresetBuilds({ nameBuilds, data }) {
-  const authPermRols = useAuth([""], false)
   const rightMenuCollapse = useRecoilState(CollapseRightBar)[0]
-  const history = useNavigate()
+  const leftMenuCollapse = useRecoilState(CollapseLeftBar)[0]
 
-  useEffect(() => {
-    if (!authPermRols[0]) {
-      history("/login")
-      return null
-    }
-  }, [])
   return (
     <div className="flex flex-col h-full bg-[#002E5D] px-[40px] pb-[40px] 2xl:text-[14px] text-[12px]">
       <div className="grid grid-row-2 spx-4 w-full h-[145px] text-[#FFFFFF] 2xl:text-[14px] text-[12px]">
@@ -33,6 +25,19 @@ function LayoutPresetBuilds({ nameBuilds, data }) {
         <TabsModule />
       </div>
       <div className="flex min-h-[80vh] bg-[#F5F9FF] rounded-xl">
+        {!leftMenuCollapse ? (
+          <div className="flex flex-col">
+            <CollapsingButton side="left" />
+            <div className="flex items-center justify-center w-[48px] h-[48px] rounded-lg mx-4">
+              <img src={categoryImg} alt="category" />
+            </div>
+          </div>
+        ) : (
+          <div className="p-2 2xl:text-[14px] text-[12px] w-[20%] bg-[#FFFFFF] rounded-l-xl">
+            <CollapsingButton side="left" />
+            <LeftSideContainer />
+          </div>
+        )}
         <div className="grid col-span-5 p-2  2xl:text-[14px] text-[12px] rounded-l-xl w-[80%] grow">
           <MainBodyContainer nameBuilds={nameBuilds} data={data} />
         </div>
