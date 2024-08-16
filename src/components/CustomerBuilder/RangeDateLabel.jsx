@@ -3,31 +3,48 @@ import "react-date-range/dist/theme/default.css" // theme css file
 
 const RangeDateLabel = ({ setDays }) => {
   const daysSelection = (e) => {
-    let selection = ""
+    let initialSelection = ""
+    let endSelection = ""
     switch (e.target.innerText) {
       case "Last 30 Days":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 30)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 30)
+        endSelection = new Date()
+        break
+      case "Last 3 Months":
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 90)
+        endSelection = new Date()
         break
       case "Last 6 Months":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 180)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 180)
+        endSelection = new Date()
         break
       case "Last 12 Months":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 365)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 365)
+        endSelection = new Date()
         break
       case "Last 2 Years":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 730)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 730)
+        endSelection = new Date()
         break
       case "Last 3 Years":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 1096)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 1096)
+        endSelection = new Date()
         break
       case "Last 4 Years":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 1461)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 1461)
+        endSelection = new Date()
         break
       case "Last 5 Years":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 1826)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 1826)
+        endSelection = new Date()
         break
       case "Last 10 Years":
-        selection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 3653)
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 3653)
+        endSelection = new Date()
+        break
+      case "Last 2-7 Years":
+        initialSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 2557)
+        endSelection = new Date(Date.now() - 24 * 60 * 60 * 1000 * 730)
         break
       default:
         break
@@ -35,8 +52,8 @@ const RangeDateLabel = ({ setDays }) => {
 
     setDays([
       {
-        startDate: selection,
-        endDate: new Date(),
+        startDate: initialSelection,
+        endDate: endSelection,
         key: "selection",
       },
     ])
@@ -56,7 +73,6 @@ const RangeDateLabel = ({ setDays }) => {
       ])
     } else {
       date.setDate(date.getDate() + +value)
-      console.log(date)
       setDays([
         {
           startDate: new Date(),
@@ -73,6 +89,11 @@ const RangeDateLabel = ({ setDays }) => {
         <button type="button" className="rdrStaticRange">
           <span tabIndex="-1" className="rdrStaticRangeLabel">
             Last 30 Days
+          </span>
+        </button>
+        <button type="button" className="rdrStaticRange">
+          <span tabIndex="-1" className="rdrStaticRangeLabel">
+            Last 3 Months
           </span>
         </button>
         <button type="button" className="rdrStaticRange">
@@ -108,6 +129,11 @@ const RangeDateLabel = ({ setDays }) => {
         <button type="button" className="rdrStaticRange">
           <span tabIndex="-1" className="rdrStaticRangeLabel">
             Last 10 Years
+          </span>
+        </button>
+        <button type="button" className="rdrStaticRange">
+          <span tabIndex="-1" className="rdrStaticRangeLabel">
+            Last 2-7 Years
           </span>
         </button>
       </div>
