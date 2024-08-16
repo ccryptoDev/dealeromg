@@ -3,6 +3,7 @@ import {
   filtersValuesStateCB,
   recordCountNumberCB,
   SpinerCB,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
 import { dealerInfo } from "../../atoms/DealerAtom"
 import { useRecoilState } from "recoil"
@@ -14,6 +15,9 @@ function ResultsModule() {
   const dealerInfoValues = useRecoilState(dealerInfo)[0]
   const [filtersValues] = useRecoilState(filtersValuesStateCB)
   const [recordCount, setRecordCount] = useRecoilState(recordCountNumberCB)
+  const [recordCountActivity, setRecordCountActivity] = useRecoilState(
+    recordCountNumberActivityCB
+  )
   const [spiner] = useRecoilState(SpinerCB)
   const prevPurchMakeLength =
     filtersValues.prevPurchMake !== null
@@ -43,17 +47,35 @@ function ResultsModule() {
   }
 
   const getRecordCountFirst = async () => {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_DOMG}BigQuery/getDealerVaultCountFromBigQuery`,
-      {
-        sqlSales: "",
-        sqlService: "",
-        roofTopID: dealerInfoValues.rooftopID,
-      }
-    )
-
-    const resBigQuery = res.data[0]
-    setRecordCount({ value: resBigQuery.numpid })
+    const bodyRequest = {
+      sqlSales: "",
+      sqlService: "",
+      roofTopID: dealerInfoValues.rooftopID,
+    }
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDealerVaultCountFromBigQuery`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data[0]
+        const recordCountNumber = resBigQuery.numpid
+        setRecordCount({ value: recordCountNumber })
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivity({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
+      })
   }
 
   useEffect(() => {
@@ -64,6 +86,37 @@ function ResultsModule() {
     }
   }, [])
 
+  const checkKeys = () => {
+    const purchaseKeys = [
+      "prevPurchYear",
+      "prevPurchMake",
+      "prevPurchDateRange",
+    ]
+    const serviceKeys = [
+      "neverPurchased",
+      "yearRange",
+      "nevSerDateRange",
+      "nevSerPrevPurch",
+      "prevSerMake",
+      "prevSerNeverPurch",
+      "prevSerTotalService",
+      "prevSerTotalSpend",
+      "PrevSerDateRange",
+    ]
+    let checkPurchase = false
+    let checkService = false
+    Object.keys(filtersValues).forEach((key) => {
+      if (purchaseKeys.includes(key) && filtersValues[key] !== null) {
+        checkPurchase = true
+      }
+      if (serviceKeys.includes(key) && filtersValues[key] !== null) {
+        checkService = true
+      }
+    })
+    return [checkPurchase, checkService]
+  }
+
+  const keys = checkKeys()
   return (
     <div className="scrollbarHideClass flex flex-col max-h-[60vh] overflow-y-scroll">
       <ul className="flex flex-row border-b border-gray-200 dark:border-gray-700">
@@ -269,6 +322,20 @@ function ResultsModule() {
               )}
             </li>
             <li>
+              {filtersValues.prevPurchNewUsed != null ? (
+                <p className="flex flex-col mb-[16px]">
+                  <span className="text-[12px] font-normal">New/Used</span>
+                  {filtersValues.prevPurchNewUsed[0] && "New"}{" "}
+                  {filtersValues.prevPurchNewUsed[0] &&
+                    filtersValues.prevPurchNewUsed[1] &&
+                    " and "}{" "}
+                  {filtersValues.prevPurchNewUsed[1] && "Used"}
+                </p>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
               {filtersValues.nevSerDateRange != null ? (
                 <p className="flex flex-col mb-[16px]">
                   <span className="text-[12px] font-normal">
@@ -287,6 +354,34 @@ function ResultsModule() {
                     Services in a Date Range
                   </span>
                   {`${filtersValues.PrevSerDateRange[0]} to ${filtersValues.PrevSerDateRange[1]}`}
+                </p>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
+              {recordCountActivity.valueSales != null && keys[0] ? (
+                <p className="flex flex-col mb-[16px]">
+                  <span className="text-[12px] font-normal">
+                    No Activity Day Count Sales
+                  </span>{" "}
+                  {recordCountActivity.valueSales
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                </p>
+              ) : (
+                ""
+              )}
+            </li>
+            <li>
+              {recordCountActivity.valueService != null && keys[1] ? (
+                <p className="flex flex-col mb-[16px]">
+                  <span className="text-[12px] font-normal">
+                    No Activity Day Count Service
+                  </span>{" "}
+                  {recordCountActivity.valueService
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </p>
               ) : (
                 ""
