@@ -7,7 +7,9 @@ import {
   FinalWhereClsCBService,
   recordCountNumberCB,
   recordCountValuesStateCB,
+  recordCountNumberActivityCB,
 } from "../../atoms/CustomerBuilderAtom"
+import { dealerInfo } from "../../atoms/DealerAtom"
 import { createSQLSliderSentence } from "../AudienceCatBuilder/utils"
 
 import reset from "../../assets/images/reset.png"
@@ -17,6 +19,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import Slider from "@mui/material/Slider"
 import SaveMessage from "../Fields/SaveMessage"
 import SwitchFilter from "../Fields/SwitchFilter"
+import { bigQueryURL } from "../../util/bigQueryURL"
 import axios from "axios"
 
 const theme = createTheme({
@@ -40,11 +43,16 @@ const PrevServVehTotalSpend = () => {
   const [filterValues, setFiltersValues] = useRecoilState(filtersValuesStateCB)
   const [AdWhereClsAM, setAdWhereClsAM] = useRecoilState(FinalWhereClsCBService)
   const sqlSales = useRecoilState(FinalWhereClsCBSale)[0]
-  const setRecordCount = useRecoilState(recordCountNumberCB)[1]
+  const setRecordCountNumber = useRecoilState(recordCountNumberCB)[1]
   const setSpiner = useRecoilState(SpinerCB)[1]
   const [recordRequest, setRecordRequest] = useRecoilState(
     recordCountValuesStateCB
   )
+  const dealerInfoValue = useRecoilState(dealerInfo)[0]
+  const setRecordCountActivityNumber = useRecoilState(
+    recordCountNumberActivityCB
+  )[1]
+  const { neverPurchased, nevSerPrevPurch, nevSerDateRange } = filterValues
 
   const handleSubmit = () => {
     setFiltersValues({
@@ -67,29 +75,47 @@ const PrevServVehTotalSpend = () => {
 
   const sendRequestCount = (recordRequestBody) => {
     setSpiner(true)
+    const sqlClean = { sql: AdWhereClsAM.sql.replace(" AND 1=0", "") }
+    const url = bigQueryURL(
+      neverPurchased,
+      nevSerPrevPurch,
+      nevSerDateRange
+    ).url
     const WhereClsAM = createSQLSliderSentence(
       recordRequestBody,
       "prevSerTotalSpend",
       "CASS_STD_ZIP4",
       filterValues,
-      AdWhereClsAM,
+      sqlClean,
       false
     )
     setAdWhereClsAM({ sql: WhereClsAM })
+    const bodyRequest = {
+      sqlService: WhereClsAM ? WhereClsAM.replace(" AND 1=0", "") : " AND 1=0",
+      sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
+      roofTopID: dealerInfoValue.rooftopID,
+    }
     axios
-      .post(
-        `${process.env.REACT_APP_API_DOMG}BigQuery/getDealerVaultCountFromBigQuery`,
-        {
-          sqlService: WhereClsAM
-            ? WhereClsAM.replace(" AND 1=0", "")
-            : " AND 1=0",
-          sqlSales: sqlSales.sql ? sqlSales.sql : " AND 1=0",
-        }
-      )
+      .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, bodyRequest)
       .then((res) => {
         const resBigQuery = res.data[0]
         const recordCountNumber = resBigQuery.numpid
-        setRecordCount({ value: recordCountNumber })
+        setRecordCountNumber({ value: recordCountNumber })
+        setSpiner(false)
+      })
+    axios
+      .post(
+        `${process.env.REACT_APP_API_DOMG}BigQuery/getDVCountDaysWithoutActivity`,
+        bodyRequest
+      )
+      .then((res) => {
+        const resBigQuery = res.data
+        const noActivitySales = resBigQuery[0]?.numpid
+        const noActivityService = resBigQuery[1]?.numpid
+        setRecordCountActivityNumber({
+          valueSales: noActivitySales,
+          valueService: noActivityService,
+        })
         setSpiner(false)
       })
   }
