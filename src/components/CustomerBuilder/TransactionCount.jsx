@@ -14,7 +14,7 @@ function TransactionCount() {
       `${process.env.REACT_APP_API_DOMG}BigQuery/getDealerVaultCountFromBigQuery`,
       {
         sqlSales: "",
-        sqlService: "" + " AND 0=1",
+        sqlService: " AND 0=1",
         roofTopID: dealerInfoValue.rooftopID,
       }
     )
@@ -22,7 +22,7 @@ function TransactionCount() {
     const responseService = axios.post(
       `${process.env.REACT_APP_API_DOMG}BigQuery/getDealerVaultCountFromBigQuery`,
       {
-        sqlSales: "" + " AND 0=1",
+        sqlSales: " AND 0=1",
         sqlService: "",
         roofTopID: dealerInfoValue.rooftopID,
       }
