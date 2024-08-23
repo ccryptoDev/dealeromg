@@ -17,6 +17,7 @@ import {
 import { bigQueryURL } from "../../util/bigQueryURL"
 import { useRecoilState } from "recoil"
 import axios from "axios"
+import check from "../../assets/images/check.svg"
 // Components
 import General from "./General"
 import { dealerInfo } from "../../atoms/DealerAtom"
@@ -40,6 +41,7 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
   const setRecordCountCB = useRecoilState(recordCountNumberCB)[1]
   const [showDelete, setShowDelete] = useState(false)
   const [deletedID, setDeletedID] = useState(null)
+  const [textMessage, setTextMessage] = useState("")
 
   const handleDelete = (id) => {
     setShowDelete(true)
@@ -48,6 +50,7 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
 
   const handleDeletePreset = (deletedID) => {
     setShowDelete(false)
+    setTextMessage("deleted")
     axios
       .delete(`${process.env.REACT_APP_API_DOMG}api/Presets/${deletedID}`)
       .then(() => {
@@ -77,17 +80,19 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
       sql = {
         sql: presetSQL.sql,
         roofTopID: dealerInfoValue.rooftopID,
-        sqlService: presetSQL.sqlService ? presetSQL.sqlService : "",
-        sqlSales: presetSQL.sqlSales ? presetSQL.sqlSales : "",
+        sqlService: filterValues.excludeService
+          ? filterValues.excludeService
+          : "",
+        sqlSales: filterValues.excludeSales ? filterValues.excludeSales : "",
       }
     } else {
       setSpinerCB(true)
       setFilterValuesCB(filterValues)
       setRecordRequestCB(recordRequest)
-      const { neverPurchased, nevSerPrevPurch } = filterValues
+      const { neverPurchased, nevSerPrevPurch, nevSerDateRange } = filterValues
       const sqlService = JSON.parse(presetsAux[0].sqlQueryService)
       const sqlSales = JSON.parse(presetsAux[0].sqlQuerySales)
-      url = bigQueryURL(neverPurchased, nevSerPrevPurch).url
+      url = bigQueryURL(neverPurchased, nevSerPrevPurch, nevSerDateRange).url
       setSqlQuerySale(sqlSales)
       setSqlQueryService(sqlService)
       setSqlQuery({ sql: "" })
@@ -97,6 +102,7 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
         roofTopID: dealerInfoValue.rooftopID,
       }
     }
+    setTextMessage("restored")
 
     axios
       .post(`${process.env.REACT_APP_API_DOMG}BigQuery/${url}`, sql)
@@ -106,15 +112,23 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
 
         if (presetsAux[0].sqlQuery !== null) {
           const resBigQueryExclude = res.data[1]?.numpid
-          setRecordCount({
-            value: recordCountNumber,
-            amountExcludeSales: filterValues.excludeSales
-              ? resBigQueryExclude
-              : null,
-            amountExcludeService: filterValues.excludeService
-              ? resBigQueryExclude
-              : null,
-          })
+          if (filterValues.excludeSales && filterValues.excludeService) {
+            setRecordCount({
+              value: resBigQuery.numpid,
+              amountExcludeService: resBigQueryExclude,
+              amountExcludeSales: res.data[2]?.numpid,
+            })
+          } else {
+            setRecordCount({
+              value: resBigQuery.numpid,
+              amountExcludeSales: filterValues.excludeSales
+                ? resBigQueryExclude
+                : null,
+              amountExcludeService: filterValues.excludeService
+                ? resBigQueryExclude
+                : null,
+            })
+          }
           setSpiner(false)
         } else {
           setRecordCountCB({ value: recordCountNumber })
@@ -133,26 +147,16 @@ function PresetResults({ nameBuilds = "", data, sqlAudience }) {
 
   return (
     <>
-      <div className="flex flex-row justify-center items-center">
-        <div className="flex flex-row bg-[#E57200] py-2 rounded-md justify-center mb-4 w-auto px-6">
-          <h3 className="flex flex-row text-white font-bold text-[15px]">
-            Click on the plus
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mx-2 text-white"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                clipRule="evenodd"
-              />
-            </svg>
-            icon or preset name from each preset to set the selection results
-          </h3>
+      {textMessage && (
+        <div className="flex w-full justify-center">
+          <div className="bg-[#E57200] py-2 rounded-md flex justify-center mb-4 w-[500px]">
+            <img className="mx-2 pt-[4px] h-[85%]" src={check} alt="check" />
+            <h3 className="text-white font-bold text-[15px]">
+              {`Your "Saved Build" was ${textMessage}.`}
+            </h3>
+          </div>
         </div>
-      </div>
+      )}
       {showDelete ? (
         <div className="overflow-y-auto backdrop-blur-sm overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-auto flex items-center justify-center">
           <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
