@@ -49,7 +49,7 @@ function MainBodyContainer() {
             No Irregular data found.
           </h2>
         ) : (
-          <EnhancedTable rows={irregular} />
+          <EnhancedTable rows={irregular} view="irregular" />
         )}
       </div>
     </>
