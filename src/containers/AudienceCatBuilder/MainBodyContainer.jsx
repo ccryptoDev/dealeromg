@@ -33,6 +33,7 @@ import GeoZipCodeArea from "../../components/AudienceCatBuilder/GeoZipCodeArea"
 import EducationalLevel from "../../components/AudienceCatBuilder/EducationalLevel"
 import SwitchFilter from "../../components/Fields/SwitchFilter"
 import SaveMessageCombine from "../../components/Fields/SaveMessageCombine"
+import MapContainer from "../../components/Map/MapContainer"
 
 function MainBodyContainer() {
   const [news, setNews] = useState(false)
@@ -258,6 +259,7 @@ function MainBodyContainer() {
       ) : null}
       {show[4].status ? <DemoOcuppation /> : null}
       {show[15].status ? <GeoZipCodeArea /> : null}
+      {show[16].status ? <MapContainer /> : null}
     </div>
   )
 }
