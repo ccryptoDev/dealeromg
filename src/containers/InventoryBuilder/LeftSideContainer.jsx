@@ -1,5 +1,5 @@
 // Components
-import FilterModule from "../../components/Campaigns/FilterModule"
+import FilterModule from "../../components/Campaigns/FilterModuleStatic"
 
 function LeftSideContainer() {
   return (
