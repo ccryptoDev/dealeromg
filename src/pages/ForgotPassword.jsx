@@ -75,7 +75,8 @@ const ForgotPassword = () => {
               </div>
             ) : null}
             <p className="font-bold text-[#002E5D]">
-              We&apos;ll email you the password reset instructions
+              Enter your email address in the field below. Once you submit it,
+              we will send you the instructions to reset your password.
             </p>
             <input
               type="email"
