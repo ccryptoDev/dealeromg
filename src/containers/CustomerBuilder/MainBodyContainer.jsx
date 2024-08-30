@@ -20,6 +20,7 @@ import PrevPurchMakeModel from "../../components/CustomerBuilder/PrevPurchMakeMo
 import PrevSerMakeModel from "../../components/CustomerBuilder/PrevSerMakeModel"
 import PrevPurchYear from "../../components/CustomerBuilder/PrevPurchYear"
 import WrongMessage from "../../components/Fields/WrongMessage"
+import PrevPurchNewUsed from "../../components/CustomerBuilder/PrevPurchNewUsed"
 
 const MainBodyContainer = () => {
   const dealerValue = useRecoilState(dealerInfo)[0]
@@ -27,7 +28,9 @@ const MainBodyContainer = () => {
   return (
     <div className="flex flex-col">
       <Breadcrumps />
-      {!dealerValue.rooftopID ? <WrongMessage /> : null}
+      {!dealerValue.rooftopID || dealerValue.rooftopID === "null" ? (
+        <WrongMessage />
+      ) : null}
       <PrevPurchMakeModel />
       <PrevSerMakeModel />
       {show[0].status ? <NevSerPrevPurch /> : null}
@@ -43,6 +46,7 @@ const MainBodyContainer = () => {
       {show[14].status ? <GeoState /> : null}
       {show[15].status ? <GeoDMA /> : null}
       {show[16].status ? <GeoZipCodeArea /> : null}
+      {show[17].status ? <PrevPurchNewUsed /> : null}
     </div>
   )
 }
