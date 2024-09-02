@@ -14,16 +14,6 @@ const DvSystemAlerts = () => {
   const [resentAlerts, setResentAlerts] = useState([])
   const [historicalAlerts, setHistoricalAlerts] = useState([])
 
-  const changeString = (string) => {
-    const newStr = string.replaceAll("_", " ")
-    const arr = newStr.split(" ")
-    for (let i = 0; i < arr.length; i++) {
-      arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1)
-    }
-    const str2 = arr.join(" ")
-    return str2
-  }
-
   const changeDateFormat = (date) => {
     const newFormat = new Date(date)
 
@@ -42,7 +32,7 @@ const DvSystemAlerts = () => {
 
   const getAdminAlertLog = () => {
     axios
-      .get(`${process.env.REACT_APP_API_DOMG}/api/Alerts/GetAllDV`)
+      .get(`${process.env.REACT_APP_API_DOMG}api/Alerts/GetAllDV`)
       .then((res) => {
         const historicalAlertsTmp = []
         const resentAlertsTmp = []
@@ -95,7 +85,7 @@ const DvSystemAlerts = () => {
     rowsHistoricalAlerTable.push(
       createHistoricalAlertTable(
         alert.id,
-        changeString(alert.alertType.slug),
+        alert.alertType.name,
         `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID} ${alert?.auditDealerVault?.result}`,
         changeDateFormat(alert.createdAt)
       )
@@ -107,7 +97,7 @@ const DvSystemAlerts = () => {
     rowsRecentAlerTable.push(
       createHistoricalAlertTable(
         alert.id,
-        changeString(alert.alertType.slug),
+        alert.alertType.name,
         `${alert.alertType.description} ${alert?.dealer?.businessName} ${alert?.dealer?.crmCompanyID} ${alert?.auditDealerVault?.result}`,
         changeDateFormat(alert.createdAt)
       )
