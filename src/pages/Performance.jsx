@@ -1,25 +1,15 @@
-import React, { useEffect } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useRecoilState } from "recoil"
 
-import useAuth from "../Hooks/useAuth"
 // Componentes
 import SecondNavbar from "../components/SecondNavbar"
 import { dealerInfo } from "../atoms/DealerAtom"
 
 function Performance() {
   const [dealerInfoValue] = useRecoilState(dealerInfo)
-  const authPermRols = useAuth([""], false)
-  const history = useNavigate()
 
-  useEffect(() => {
-    if (!authPermRols[0]) {
-      history("/login")
-      return null
-    }
-  }, [])
   return (
-    <div className="flex flex-col bg-[#002E5D] px-[40px] pb-[40px] 2xl:text-[14px] text-[12px] h-[100vh]">
+    <div className="flex flex-col bg-[#002E5D] px-[40px] pb-[40px] 2xl:text-[14px] text-[12px] h-[4250px]">
       <div className="grid grid-row-2 spx-4 w-full h-[145px] text-[#FFFFFF] 2xl:text-[14px] text-[12px]">
         <SecondNavbar />
       </div>
@@ -42,14 +32,14 @@ function Performance() {
           </svg>
         </Link>
       </div>
-      <div className="flex space-x-4 items-center justify-center">
-        <Link
-          to="/target-market/audience-builder"
-          className="inline-block py-4 px-4 text-sm font-medium text-center rounded-lg mt-2 w-[15%]
-            text-gray-600 bg-gray-50 hover:bg-[#298FC2] hover:text-white dark:text-gray-400 dark:bg-gray-800 dark:text-gray-300"
-        >
-          Audience Builder
-        </Link>
+      <div className="flex space-x-4 items-center justify-center w-full mt-16">
+        <iframe
+          src={dealerInfoValue.dashThisURL}
+          title="DashThis"
+          width="100%"
+          height="4050px"
+          allowFullScreen
+        />
       </div>
     </div>
   )
