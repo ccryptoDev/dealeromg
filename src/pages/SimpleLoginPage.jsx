@@ -39,6 +39,14 @@ const SimpleLoginPage = () => {
       })
       .then((res) => {
         if (res.status === 200) {
+          if (res.data.user.mfa) {
+            localStorage.setItem(
+              "permissionsDealerOMG",
+              JSON.stringify(res.data.user)
+            )
+            history("/validate-mfa")
+            return null
+          }
           localStorage.setItem("tokenDealerOMG", res.data.token)
           localStorage.setItem(
             "permissionsDealerOMG",
