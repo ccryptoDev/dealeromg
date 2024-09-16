@@ -10,6 +10,7 @@ import GlobalBuilds from "../pages/target-market/GlobalBuilds"
 import UserBuilds from "../pages/target-market/UserBuilds"
 import DealerBuilds from "../pages/target-market/DealerBuilds"
 import SimpleLoginPage from "../pages/SimpleLoginPage"
+import SimpleMFACodePage from "../pages/SimpleMFACodePage"
 import EntryPage from "../pages/EntryPage"
 import AdminPanel from "../pages/AdminPanel"
 import NewUser from "../pages/AdminPanel/NewUser"
@@ -102,7 +103,7 @@ function App() {
               path="/business-settings/profile"
               element={
                 <WithPermissionRouter
-                  rols={["super-admin", "admin", "Management", "Staff"]}
+                  rols={["super-admin", "admin", "Management"]}
                   grantByRols={true}
                   requireDealer={true}
                 >
@@ -115,7 +116,7 @@ function App() {
               path="/business-settings/inventory-urls"
               element={
                 <WithPermissionRouter
-                  rols={["super-admin", "admin", "Management", "Staff"]}
+                  rols={["super-admin", "admin", "Management"]}
                   grantByRols={true}
                   requireDealer={true}
                 >
@@ -128,7 +129,7 @@ function App() {
               path="/business-settings/customize"
               element={
                 <WithPermissionRouter
-                  rols={["super-admin", "admin", "Management", "Staff"]}
+                  rols={["super-admin", "admin", "Management"]}
                   grantByRols={true}
                   requireDealer={true}
                 >
@@ -141,7 +142,7 @@ function App() {
               path="/business-settings/connect"
               element={
                 <WithPermissionRouter
-                  rols={["super-admin", "admin", "Management", "Staff"]}
+                  rols={["super-admin", "admin", "Management"]}
                   grantByRols={true}
                   requireDealer={true}
                 >
@@ -154,7 +155,7 @@ function App() {
               path="/business-settings/hierarchy"
               element={
                 <WithPermissionRouter
-                  rols={["super-admin", "admin", "Management", "Staff"]}
+                  rols={["super-admin", "admin", "Management"]}
                   grantByRols={true}
                   requireDealer={true}
                 >
@@ -167,7 +168,7 @@ function App() {
               path="/business-settings/alerts"
               element={
                 <WithPermissionRouter
-                  rols={["super-admin", "admin", "Management", "Staff"]}
+                  rols={["super-admin", "admin", "Management"]}
                   grantByRols={true}
                   requireDealer={true}
                 >
@@ -180,7 +181,7 @@ function App() {
               path="/business-settings/alert-control"
               element={
                 <WithPermissionRouter
-                  rols={["super-admin", "admin", "Management", "Staff"]}
+                  rols={["super-admin", "admin", "Management"]}
                   grantByRols={true}
                   requireDealer={true}
                 >
@@ -188,46 +189,113 @@ function App() {
                 </WithPermissionRouter>
               }
             />
-            <Route exact path="/admin-panel/new-user" element={<NewUser />} />
+            <Route
+              exact
+              path="/admin-panel/new-user"
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <NewUser />
+                </WithPermissionRouter>
+              }
+            />
             <Route
               exact
               path="/admin-panel/user-management"
-              element={<UserManagement />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <UserManagement />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
               path="/admin-panel/feed-providers"
-              element={<FeedProvider />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <FeedProvider />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
               path="/admin-panel/user-bulk-upload"
-              element={<AdminPanel />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <AdminPanel />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
               path="/admin-panel/customize"
-              element={<AdminPanel />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <AdminPanel />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
               path="/admin-panel/dealer-list"
-              element={<AdminPanel />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <AdminPanel />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
               path="/admin-panel/provider-management"
-              element={<ProviderManagement />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <ProviderManagement />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
               path="/admin-panel/feed-system-alerts"
-              element={<SystemAlerts />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <SystemAlerts />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
               path="/admin-panel/dv-system-alerts"
-              element={<DvSystemAlerts />}
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin"]}
+                  grantByRols={true}
+                >
+                  <DvSystemAlerts />
+                </WithPermissionRouter>
+              }
             />
             <Route
               exact
@@ -273,8 +341,21 @@ function App() {
               path="/inventory/outbound/:platform_id"
               element={<FilesList />}
             />
-            <Route exact path="/performance" element={<Performance />} />
+            <Route
+              exact
+              path="/performance"
+              element={
+                <WithPermissionRouter
+                  rols={["super-admin", "admin", "Management"]}
+                  grantByRols={true}
+                  requireDealer={true}
+                >
+                  <Performance />
+                </WithPermissionRouter>
+              }
+            />
             <Route path="/login" element={<SimpleLoginPage />} />
+            <Route path="/validate-mfa" element={<SimpleMFACodePage />} />
             <Route path="/" element={<EntryPage />} />
             <Route
               exact
