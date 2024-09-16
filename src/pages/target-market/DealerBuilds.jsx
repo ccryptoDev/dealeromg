@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useRecoilState } from "recoil"
 
 import { dealerInfo } from "../../atoms/DealerAtom"
-import useAuth from "../../Hooks/useAuth"
 import LayoutPresetBuilds from "../../containers/PresetBuilds/LayoutPresetBuilds"
 
 function DealerBuilds() {
-  const authPermRols = useAuth([""], false)
-  const history = useNavigate()
   const [data, setData] = useState([])
   const [dealerInfoValue] = useRecoilState(dealerInfo)
   const getPresets = () => {
@@ -28,10 +24,6 @@ function DealerBuilds() {
   }
 
   useEffect(() => {
-    if (!authPermRols[0]) {
-      history("/login")
-      return null
-    }
     getPresets()
   }, [])
 
