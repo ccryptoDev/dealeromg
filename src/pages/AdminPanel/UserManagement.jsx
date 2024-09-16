@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef } from "react"
 import axios from "axios"
 import check from "../../assets/images/check.svg"
 import { CameraIcon } from "@heroicons/react/outline"
@@ -7,19 +7,21 @@ import LayoutAdminPanel from "../../containers/AdminPanel/LayoutAdminPanel"
 export default function UserManagement() {
   const [selectedFile, setSelectedFile] = useState(null)
   const filePickerRef = useRef(null)
-  const [roleID, setRoleID] = React.useState(0)
-  const [firstName, setFirstName] = React.useState("")
-  const [lastName, setLastName] = React.useState("")
+  const [roleID, setRoleID] = useState(0)
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [password, setPassword] = useState("")
-  const [title, setTitle] = React.useState("")
-  const [phone, setPhone] = React.useState("")
-  const [department, setDepartment] = React.useState("")
-  const [email, setEmail] = React.useState("")
-  const [status, setStatus] = React.useState(true)
-  const [oldStatus, setOldStatus] = React.useState(true)
-  const [success, setSuccess] = React.useState(false)
+  const [title, setTitle] = useState("")
+  const [phone, setPhone] = useState("")
+  const [department, setDepartment] = useState("")
+  const [email, setEmail] = useState("")
+  const [status, setStatus] = useState(true)
+  const [oldStatus, setOldStatus] = useState(true)
+  const [success, setSuccess] = useState(false)
   const [users, setUsers] = useState([])
   const [userID, setUserID] = useState(0)
+  const [multifactor, setMultifactor] = useState(true)
+  const [showPassword, setShowPassword] = useState(false)
   const getUsers = () => {
     axios
       .get(`${process.env.REACT_APP_API_DOMG}Users`)
@@ -52,6 +54,9 @@ export default function UserManagement() {
       )
       setEmail(users.find((user) => user.userID === parseInt(userID))?.email)
       setStatus(users.find((user) => user.userID === parseInt(userID))?.status)
+      setMultifactor(
+        users.find((user) => user.userID === parseInt(userID))?.mfa
+      )
     }
   }, [userID])
 
@@ -88,6 +93,7 @@ export default function UserManagement() {
       formData.append("Phone", phone)
       formData.append("Department", department)
       formData.append("Email", email)
+      formData.append("MFA", multifactor)
       const file = document.getElementById("userLogo").files[0]
       file ? formData.append("Photo", file) : formData.append("Photo", null)
       formData.append("Status", status)
@@ -203,16 +209,42 @@ export default function UserManagement() {
                 />
               </div>
               <div className="grid grid-cols-12">
-                <h2 className="grid col-span-2 font-bold text-[#586283]">
-                  Password
-                </h2>
                 <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  type="password"
-                  className="grid col-span-10 rounded-xl w-[90%] p-[16px]  focus:outline-[#58628325] ml-[15px] mb-[12px]"
+                  id="checkbox-password"
+                  checked={showPassword}
+                  onChange={() => setShowPassword(!showPassword)}
+                  aria-describedby="checkbox-show-password"
+                  type="checkbox"
+                  className="grid col-span-1 w-4 h-4 bg-[#298fc217] text-[#298FC2] rounded-full border-gray-300 focus:ring-blue-500 dark:focus:ring-[#298FC2] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 />
+                <label
+                  htmlFor="checkbox-show-password"
+                  className="grid col-span-11 ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Edit Password
+                </label>
               </div>
+              {showPassword && (
+                <div className="grid grid-cols-12">
+                  <h2 className="grid col-span-2 font-bold text-[#586283]">
+                    Password
+                  </h2>
+                  <input
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    type="password"
+                    autoComplete="new-password"
+                    className="grid col-span-10 rounded-xl w-[90%] p-[16px]  focus:outline-[#58628325] ml-[15px] mb-[12px]"
+                  />
+                  <label
+                    htmlFor="checkbox-show-password"
+                    className="grid col-span-12 ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >
+                    This password field should be blank unless you plan to
+                    change the user&apos;s password.
+                  </label>
+                </div>
+              )}
               <div className="grid grid-cols-12">
                 <h2 className="grid col-span-2 font-bold text-[#586283]">
                   Title
@@ -259,6 +291,23 @@ export default function UserManagement() {
                   value={email}
                   className="grid col-span-10 rounded-xl w-[90%] p-[16px]  focus:outline-[#58628325] ml-[15px] mb-[12px]"
                 />
+              </div>
+              <div className="grid grid-cols-12">
+                <input
+                  id="checkbox-multifactor"
+                  checked={multifactor}
+                  onChange={() => setMultifactor(!multifactor)}
+                  aria-describedby="checkbox-multifactor"
+                  type="checkbox"
+                  className="grid col-span-1 w-4 h-4 bg-[#298fc217] text-[#298FC2] rounded-full border-gray-300 focus:ring-blue-500 dark:focus:ring-[#298FC2] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  htmlFor="checkbox-multifactor"
+                  className="grid col-span-11 ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Two Factor Authentication Required (Temporally uncheck to
+                  resolve login issues)
+                </label>
               </div>
             </div>
             <div className="flex flex-col justify-center items-center w-[50%] rounded-lg bg-white p-[20px]">
