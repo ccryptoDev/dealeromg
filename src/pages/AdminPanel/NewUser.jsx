@@ -1,35 +1,35 @@
-import React, { useState, useRef } from "react";
-import axios from "axios";
-import check from "../../assets/images/check.svg";
-import { CameraIcon } from "@heroicons/react/outline";
-import LayoutAdminPanel from "../../containers/AdminPanel/LayoutAdminPanel";
+import React, { useState, useRef } from "react"
+import axios from "axios"
+import check from "../../assets/images/check.svg"
+import { CameraIcon } from "@heroicons/react/outline"
+import LayoutAdminPanel from "../../containers/AdminPanel/LayoutAdminPanel"
 
 export default function NewUser() {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const filePickerRef = useRef(null);
-  const [roleID, setRoleID] = React.useState(5);
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [title, setTitle] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [department, setDepartment] = React.useState("Development");
-  const [email, setEmail] = React.useState("");
-  const [status, setStatus] = React.useState(true);
-  const [success, setSuccess] = React.useState(false);
-  const [error, setError] = React.useState(false);
+  const [selectedFile, setSelectedFile] = useState(null)
+  const filePickerRef = useRef(null)
+  const [roleID, setRoleID] = React.useState(5)
+  const [firstName, setFirstName] = React.useState("")
+  const [lastName, setLastName] = React.useState("")
+  const [title, setTitle] = React.useState("")
+  const [phone, setPhone] = React.useState("")
+  const [department, setDepartment] = React.useState("Development")
+  const [email, setEmail] = React.useState("")
+  const [status, setStatus] = React.useState(true)
+  const [success, setSuccess] = React.useState(false)
+  const [error, setError] = React.useState(false)
 
   const addImageToPost = (e) => {
-    const reader = new FileReader();
+    const reader = new FileReader()
     if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(e.target.files[0])
     }
     reader.onload = (readerEvent) => {
-      setSelectedFile(readerEvent.target.result);
-    };
-  };
+      setSelectedFile(readerEvent.target.result)
+    }
+  }
 
   const createUser = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (
       email !== "" &&
       firstName !== "" &&
@@ -40,19 +40,19 @@ export default function NewUser() {
       roleID !== null &&
       status !== null
     ) {
-      const formData = new FormData();
-      formData.append("User", email);
-      formData.append("Password", "CN6jMW#0Wfoy");
-      formData.append("RoleID", parseInt(roleID));
-      formData.append("FirstName", firstName);
-      formData.append("LastName", lastName);
-      formData.append("Title", title);
-      formData.append("Phone", phone);
-      formData.append("Department", department);
-      formData.append("Email", email);
-      const file = document.getElementById("userLogo").files[0];
-      file ? formData.append("Photo", file) : formData.append("Photo", null);
-      formData.append("Status", status);
+      const formData = new FormData()
+      formData.append("User", email)
+      formData.append("Password", "CN6jMW#0Wfoy")
+      formData.append("RoleID", parseInt(roleID))
+      formData.append("FirstName", firstName)
+      formData.append("LastName", lastName)
+      formData.append("Title", title)
+      formData.append("Phone", phone)
+      formData.append("Department", department)
+      formData.append("Email", email)
+      const file = document.getElementById("userLogo").files[0]
+      file ? formData.append("Photo", file) : formData.append("Photo", null)
+      formData.append("Status", status)
       axios
         .post(`${process.env.REACT_APP_API_DOMG}Register`, formData, {
           headers: {
@@ -61,31 +61,31 @@ export default function NewUser() {
         })
         .then((res) => {
           if (res.status === 200) {
-            setSuccess(true);
-            setEmail("");
-            setFirstName("");
-            setLastName("");
-            setTitle("");
-            setPhone("");
-            setDepartment("Development");
-            setSelectedFile("");
-            setRoleID(5);
-            setStatus(true);
+            setSuccess(true)
+            setEmail("")
+            setFirstName("")
+            setLastName("")
+            setTitle("")
+            setPhone("")
+            setDepartment("Development")
+            setSelectedFile("")
+            setRoleID(5)
+            setStatus(true)
             setTimeout(() => {
-              setSuccess(false);
-            }, 10000);
+              setSuccess(false)
+            }, 10000)
           }
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     } else {
-      setError(true);
+      setError(true)
       setTimeout(() => {
-        setError(false);
-      }, 10000);
+        setError(false)
+      }, 10000)
     }
-  };
+  }
 
   return (
     <LayoutAdminPanel>
@@ -299,5 +299,5 @@ export default function NewUser() {
         </div>
       </div>
     </LayoutAdminPanel>
-  );
+  )
 }
