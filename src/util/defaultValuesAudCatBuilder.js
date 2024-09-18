@@ -15,6 +15,7 @@ const defaultValuesAudBuild = [
   { name: "Vehicle Models", status: false },
   { name: "Vehicle Makes", status: false },
   { name: "Zip Code Radius", status: false },
+  { name: "Map", status: false },
 ]
 
 export default defaultValuesAudBuild
