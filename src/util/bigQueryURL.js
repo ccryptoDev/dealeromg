@@ -1,8 +1,7 @@
 export const bigQueryURL = (
   neverPurchased,
   nevSerPrevPurch,
-  nevSerDateRange = false,
-  prevPurchDateRange = false
+  nevSerDateRange
 ) => {
   const bigQueryURL = {
     url: "",
@@ -16,12 +15,7 @@ export const bigQueryURL = (
 
   const excludeSalesServiceQuery = neverPurchased && nevSerPrevPurch
 
-  const includeSalesNeverServiceQuery = !!(
-    nevSerDateRange &&
-    nevSerDateRange[0] &&
-    prevPurchDateRange &&
-    prevPurchDateRange[0]
-  )
+  const includeSalesNeverServiceQuery = !!nevSerDateRange
 
   if (includeSalesNeverServiceQuery) {
     bigQueryURL.url = "getDealerVaultCountFromBQSalesNeverService"
