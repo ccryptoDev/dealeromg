@@ -82,6 +82,7 @@ export const defaultFilterValuesCB = {
   prevSerTotalService: null,
   prevSerTotalSpend: null,
   PrevSerDateRange: null,
+  prevPurchNewUsed: null,
 }
 
 export const defaultRecordCountValuesCB = {
@@ -104,4 +105,5 @@ export const defaultRecordCountValuesCB = {
   prevSerTotalService: null,
   prevSerTotalSpend: null,
   PrevSerDateRange: null,
+  prevPurchNewUsed: null,
 }
