@@ -16,6 +16,7 @@ const defaultValuesCustBuild = [
   { name: "State", status: false },
   { name: "DMA", status: false },
   { name: "Zip Code Radius", status: false },
+  { name: "New/Used", status: false },
 ]
 
 export default defaultValuesCustBuild
